@@ -1,0 +1,66 @@
+Q: I ing1 ing2 ing3 ing4 ing5 ing6 ing7 ing8 ing9 erro F
+I: I
+F: F
+I -> ing1       | a
+I -> ing2       | p
+I -> ing3       | o
+I -> ing4       | e
+I -> ing5       | d
+I -> ing6       | v
+I -> ing7       | m
+I -> ing8       | c
+I -> ing9       | b
+
+ing1 -> ing2    | p
+ing1 -> erro    | o
+ing1 -> ing4    | e
+ing1 -> ing7    | m
+ing1 -> ing8    | c
+ing1 -> erro    | v, d, b
+
+ing2 -> ing1    | a
+ing2 -> erro    | o
+ing2 -> ing4    | e
+ing2 -> ing7    | m
+ing2 -> ing8    | c
+ing2 -> erro    | v, d, b
+ing2 -> F       | p
+
+ing3 -> erro    | a, p, e, v, m, c
+ing3 -> ing4    | e
+ing3 -> erro    | d, b
+
+ing4 -> ing2    | p
+ing4 -> erro    | o
+ing4 -> ing1    | a
+ing4 -> erro    | d, v, m, c, b
+
+ing5 -> ing1    | a
+ing5 -> ing2    | p
+ing5 -> erro    | o
+ing5 -> erro    | e, v, c, b
+ing5 -> ing7    | m
+
+ing6 -> ing2    | p
+ing6 -> erro    | o, a
+ing6 -> ing4    | e
+ing6 -> ing1    | a
+ing6 -> erro    | d, c, b
+
+ing7 -> ing1    | a
+ing7 -> ing2    | p
+ing7 -> erro    | o, v, d, b
+ing7 -> ing4    | e
+ing7 -> ing8    | c
+ing7 -> F       | p
+
+ing8 -> ing1    | a
+ing8 -> ing2    | p
+ing8 -> erro    | o
+ing8 -> ing4    | e
+ing8 -> erro    | d, v, b
+
+ing9 -> erro    | a, p, o, e, v, d, c
+ing9 -> F       | b
+
+F -> erro       | a, p, o, e, v, m, d, c, b
