@@ -53,6 +53,14 @@ class IngredientSimulator(tk.Tk):
         super().__init__()
         self.title("Simulador de Poções")
         self.geometry("800x500")
+        
+        # Inicializa as descrições dos ingredientes
+        self.ingredient_descriptions = {
+            'a': 'Água - Essencial para a vida.',
+            'p': 'Pétalas - Usadas em poções de cura.',
+            'o': 'Óleo - Incompatível com água, usado em poções de resistência.',
+            # Adicione outras descrições conforme necessário
+        }
 
         # Divisão em 2 colunas
         self.grid_columnconfigure(0, weight=1)  # Coluna esquerda
@@ -124,7 +132,7 @@ class IngredientSimulator(tk.Tk):
             img = img.resize((200, 200), Image.ANTIALIAS)
             img_tk = ImageTk.PhotoImage(img)
 
-            img_label = tk.Label(self.image_container, image=img_tk)
+            img_label = tk.Label(self.image_container, image=img_tk, text=self.ingredient_descriptions.get(ingredient_char, ""), compound=tk.TOP, font=("Arial", 14))
             img_label.image = img_tk  # Referência para evitar que o garbage collector limpe a imagem
             img_label.pack(expand=True)  # Expande para centralizar a imagem
         else:
@@ -137,12 +145,8 @@ class IngredientSimulator(tk.Tk):
 
         self.ingredients_sequence.append(ingredient_char)  # Adiciona o ingrediente à sequência
 
-        if self.afd.current_state == self.afd.error_state:
-            self.terminal.insert(tk.END, "Erro na mistura!\n")
-            self.afd.reset()  # Reseta o AFD após erro
-        else:
-            self.terminal.insert(tk.END, f"Ingrediente adicionado: {ingredient_char}\n")
-
+        self.terminal.insert(tk.END, f"Ingrediente adicionado: {ingredient_char}\n")
+        
         self.terminal.see(tk.END)
         self.ingredient_entry.delete(0, tk.END)  # Limpa a entrada após o processamento
 
