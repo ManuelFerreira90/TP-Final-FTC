@@ -117,24 +117,26 @@ class IngredientSimulator(tk.Tk):
             img_path = "ingredientes/fundo.png"
             if os.path.exists(img_path):
                 img = Image.open(img_path)
-                img = img.resize((200, 200), Image.ANTIALIAS)
+                img = img.resize((200, 200))
                 img_tk = ImageTk.PhotoImage(img)
 
                 img_label = tk.Label(self.image_container, image=img_tk)
                 img_label.image = img_tk  # Referência para evitar que o garbage collector limpe a imagem
                 img_label.pack(expand=True)  # Expande para centralizar a imagem
+                self.update_idletasks()  # Force an update to ensure the image is shown
             return
 
         # Carrega e exibe a imagem do ingrediente correspondente ao símbolo
         img_path = f"ingredientes/{ingredient_char}.jpeg"  # Supondo que as imagens estão na pasta "ingredientes"
         if os.path.exists(img_path):
             img = Image.open(img_path)
-            img = img.resize((200, 200), Image.ANTIALIAS)
+            img = img.resize((200, 200))
             img_tk = ImageTk.PhotoImage(img)
 
             img_label = tk.Label(self.image_container, image=img_tk, text=self.ingredient_descriptions.get(ingredient_char, ""), compound=tk.TOP, font=("Arial", 14))
             img_label.image = img_tk  # Referência para evitar que o garbage collector limpe a imagem
             img_label.pack(expand=True)  # Expande para centralizar a imagem
+            self.update_idletasks()  # Force an update to ensure the image is shown
         else:
             messagebox.showerror("Erro", f"Imagem para o ingrediente '{ingredient_char}' não encontrada.")
 
