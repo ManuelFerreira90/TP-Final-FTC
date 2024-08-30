@@ -59,7 +59,12 @@ class IngredientSimulator(tk.Tk):
             'a': 'Água - Essencial para a vida.',
             'p': 'Pétalas - Usadas em poções de cura.',
             'o': 'Óleo - Incompatível com água, usado em poções de resistência.',
-            # Adicione outras descrições conforme necessário
+            'b': 'Sangue de Basilisco - Letal se unido em cinzas de Fênix (c). Fora isso fortalece o efeito das poções',
+            'c': 'Cinzas de Fênix - Revitalização e renascimento. Dá à poção propriedades de cura extrema.Só pode ser combinada com ingredientes neutros como água (a); misturar com escama de dragão (d) cancela seus efeitos. ',
+            'm': 'Raiz de Mandrágora - Essencial em poções de cura, revitalizando quem a consome. Deve ser combinada com pétalas (p) ou água (a) para funcionar corretamente; misturar com óleo (o) causa um efeito tóxico.',
+            'v': 'Vapor de Vulcão - Aumenta a temperatura da poção, intensificando seus efeitos. Restrições: Não pode ser misturado com água (a), se não...KABOOM.',
+            'd': 'Escama de Dragão - Dá à poção um efeito protetor, tornando-a útil em poções de defesa. Não pode ser misturada com ingredientes frágeis como pétalas (p), a delicadeza as suaviza e as deixa inúteis.',
+            'e': 'Poeira de Estrela - Sabe seu desejo que nunca se realizou? A sua estrela cadente foi refinada em poeira, tornando as poções mais potentes com sua mágica. Deve ser o último ingrediente adicionado; caso contrário, a poção falha, resultando em um estado de erro (e uma supernova).'
         }
 
         # Divisão em 2 colunas
@@ -72,102 +77,146 @@ class IngredientSimulator(tk.Tk):
         self.terminal.grid(row=0, column=0, sticky="nsew")
 
         # Imagem do ingrediente (lado direito)
-        self.ingredient_image_label = tk.Label(self, font=("Arial", 16))
+        self.ingredient_image_label = tk.Label(self)
         self.ingredient_image_label.grid(row=0, column=1, sticky="nsew")
 
-        # Container para a imagem
-        self.image_container = tk.Frame(self.ingredient_image_label)
-        self.image_container.pack(expand=True)  # Expande para ocupar o espaço disponível
+        # Widget para descrição do ingrediente
+        self.description_text = tk.Text(self, wrap=tk.WORD, font=("Arial", 14), height=10, width=25, bg="lightyellow", state=tk.DISABLED)
+        self.description_text.grid(row=1, column=1, sticky="nsew", padx=10, pady=10)
 
         # Campo de entrada para símbolo do ingrediente
         self.ingredient_entry = tk.Entry(self, font=("Arial", 14))
-        self.ingredient_entry.grid(row=1, column=0, columnspan=2, pady=10)
+        self.ingredient_entry.grid(row=2, column=0, columnspan=2, pady=10)
 
         # Botão para adicionar ingrediente
         self.add_button = tk.Button(self, text="Adicionar Ingrediente", command=self.add_ingredient)
-        self.add_button.grid(row=2, column=0, columnspan=2, pady=10)
+        self.add_button.grid(row=3, column=0, columnspan=2, pady=10)
 
         # Botão para finalizar a poção
         self.finish_button = tk.Button(self, text="Finalizar Poção", command=self.finalize_potion)
-        self.finish_button.grid(row=3, column=0, columnspan=2, pady=10)
+        self.finish_button.grid(row=4, column=0, columnspan=2, pady=10)
 
         # Botão para resetar a simulação
         self.reset_button = tk.Button(self, text="Resetar", command=self.reset_simulation)
-        self.reset_button.grid(row=4, column=0, columnspan=2, pady=10)
+        self.reset_button.grid(row=5, column=0, columnspan=2, pady=10)
 
         # Carregar AFD
-        self.afd = load_afd_from_file('afd_input.txt')
+        self.afd = load_afd_from_file('afd_inpunt1.txt')
         self.ingredients_sequence = []  # Lista para armazenar a sequência de ingredientes
 
+        # Adiciona a animação do Doom Guy
+        self.doom_guy_situation = 0  # Começa com o Doom Guy em um estado normal
+        self.doom_guy_state = 1  # Começa na face do meio
+        self.doom_guy_faces_swapped = 0
+        self.load_doom_guy_image()
+        self.animate_doom_guy()
+
+    def load_doom_guy_image(self):
+        # Paths for the images
+        doom_guy_path = "imagens/doom_guy/doom_guy_calm.png"
+        cover_path = "imagens/doom_guy/doom_guy_inventory_cover.png"
+
+        if os.path.exists(doom_guy_path) and os.path.exists(cover_path):
+            # Load Doom Guy image and convert to RGBA for transparency support
+            doom_guy_image = Image.open(doom_guy_path).convert("RGBA")
+
+            # Load the cover image
+            cover_image = Image.open(cover_path).convert("RGBA")
+
+            # Get dimensions of the Doom Guy image (assumes all faces have the same size)
+            face_width = 60
+            face_height = doom_guy_image.height
+
+            # Ensure cover image is in the same dimensions
+            cover_image = cover_image.crop((0, 0, face_width, face_height))
+
+            # Create a transparent background with the same size as the Doom Guy face
+            background = Image.new('RGBA', (face_width, face_height), (0, 0, 0, 0))
+
+            # Composite the cover image onto the background
+            background.paste(cover_image, (0, 0), cover_image)
+
+            # Create Doom Guy face images by compositing the animated faces on top of the background
+            self.doom_guy_faces = [
+                ImageTk.PhotoImage(Image.alpha_composite(background, doom_guy_image.crop((0, 0, face_width, face_height)))),
+                ImageTk.PhotoImage(Image.alpha_composite(background, doom_guy_image.crop((face_width, 0, 2 * face_width, face_height)))),
+                ImageTk.PhotoImage(Image.alpha_composite(background, doom_guy_image.crop((2 * face_width, 0, 3 * face_width, face_height))))
+            ]
+
+            # Create a label for the Doom Guy face and place it in the bottom right corner
+            self.doom_guy_label = tk.Label(self, image=self.doom_guy_faces[self.doom_guy_state])
+            self.doom_guy_label.place(relx=1.0, rely=1.0, anchor="se")  # Place in the bottom right corner
+
+    def animate_doom_guy(self):
+        if self.doom_guy_situation == 0:
+            # Alterna entre os estados
+            self.doom_guy_faces_swapped += 1
+            if self.doom_guy_faces_swapped > 10:
+                self.doom_guy_state = 1
+                self.doom_guy_faces_swapped = 0
+            else:
+                if self.doom_guy_state == 0:
+                    self.doom_guy_state = 2
+                else:
+                    self.doom_guy_state = 0
+        self.doom_guy_label.config(image=self.doom_guy_faces[self.doom_guy_state])
+        self.after(500, self.animate_doom_guy)
+
     def add_ingredient(self):
-        ingredient_char = self.ingredient_entry.get().strip()  # Pega a entrada do usuário
-        if not ingredient_char:
-            messagebox.showerror("Erro", "Por favor, insira um símbolo de ingrediente.")
-            return
+        ingredient = self.ingredient_entry.get().strip().lower()
 
-        self.process_ingredient(ingredient_char)
+        if ingredient in self.ingredient_descriptions:
+            self.ingredients_sequence.append(ingredient)
+            self.terminal.insert(tk.END, f"Iniciando a poção com o ingrediente: {ingredient}\n")
 
-    def show_ingredient(self, ingredient_char):
-        # Limpa a imagem anterior
-        for widget in self.image_container.winfo_children():
-            widget.destroy()
+            # Atualizar imagem e descrição do ingrediente
+            self.update_ingredient_image_and_description(ingredient)
 
-        if not ingredient_char:
-            # Se não houver ingrediente, exibe a imagem de fundo
-            img_path = "ingredientes/fundo.png"
-            if os.path.exists(img_path):
-                img = Image.open(img_path)
-                img = img.resize((200, 200))
-                img_tk = ImageTk.PhotoImage(img)
+            self.afd.reset()
+            self.afd.process_input(ingredient)
 
-                img_label = tk.Label(self.image_container, image=img_tk)
-                img_label.image = img_tk  # Referência para evitar que o garbage collector limpe a imagem
-                img_label.pack(expand=True)  # Expande para centralizar a imagem
-                self.update_idletasks()  # Force an update to ensure the image is shown
-            return
-
-        # Carrega e exibe a imagem do ingrediente correspondente ao símbolo
-        img_path = f"ingredientes/{ingredient_char}.jpeg"  # Supondo que as imagens estão na pasta "ingredientes"
-        if os.path.exists(img_path):
-            img = Image.open(img_path)
-            img = img.resize((200, 200))
-            img_tk = ImageTk.PhotoImage(img)
-
-            img_label = tk.Label(self.image_container, image=img_tk, text=self.ingredient_descriptions.get(ingredient_char, ""), compound=tk.TOP, font=("Arial", 14))
-            img_label.image = img_tk  # Referência para evitar que o garbage collector limpe a imagem
-            img_label.pack(expand=True)  # Expande para centralizar a imagem
-            self.update_idletasks()  # Force an update to ensure the image is shown
+            ##if self.afd.is_accepted():
+              ##  self.terminal.insert(tk.END, f"Ingrediente {ingredient} aceito na sequência.\n")
+            ##else:
+              ##  self.terminal.insert(tk.END, f"Ingrediente {ingredient} não aceito na sequência.\n")
         else:
-            messagebox.showerror("Erro", f"Imagem para o ingrediente '{ingredient_char}' não encontrada.")
+            messagebox.showerror("Erro", "Ingrediente inválido. Por favor, insira um ingrediente válido.")
+        self.ingredient_entry.delete(0, tk.END)
 
+    def update_ingredient_image_and_description(self, ingredient):
+        # Atualizar a imagem do ingrediente
+        image_path = f"imagens/ingredientes/{ingredient}.jpg"
+        if os.path.exists(image_path):
+            image = Image.open(image_path)
+            image = image.resize((200, 200))  # Ajusta o tamanho da imagem
+            self.ingredient_image_label.image = ImageTk.PhotoImage(image)
+            self.ingredient_image_label.config(image=self.ingredient_image_label.image)
+        else:
+            self.ingredient_image_label.config(image='')  # Limpa a imagem se não encontrada
 
-    def process_ingredient(self, ingredient_char):
-        self.afd.process_input(ingredient_char)
-        self.show_ingredient(ingredient_char)  # Mostra a imagem do ingrediente
-
-        self.ingredients_sequence.append(ingredient_char)  # Adiciona o ingrediente à sequência
-
-        self.terminal.insert(tk.END, f"Ingrediente adicionado: {ingredient_char}\n")
-        
-        self.terminal.see(tk.END)
-        self.ingredient_entry.delete(0, tk.END)  # Limpa a entrada após o processamento
+        # Atualizar a descrição do ingrediente
+        description = self.ingredient_descriptions.get(ingredient, "")
+        self.description_text.config(state=tk.NORMAL)
+        self.description_text.delete(1.0, tk.END)
+        self.description_text.insert(tk.END, description)
+        self.description_text.config(state=tk.DISABLED)
 
     def finalize_potion(self):
-        if self.afd.is_accepted():
-            self.terminal.insert(tk.END, "Poção criada com sucesso!\n")
-        else:
-            self.terminal.insert(tk.END, "Erro na mistura! Poção não criada.\n")
+        # Simula o processo de finalização da poção
+        self.terminal.insert(tk.END, "Finalizando a poção...\n")
+        self.terminal.insert(tk.END, f"Sequência final dos ingredientes: {''.join(self.ingredients_sequence)}\n")
+        self.terminal.insert(tk.END, "Poção finalizada com sucesso!\n")
 
-        self.terminal.see(tk.END)
-        self.afd.reset()  # Reseta o AFD após a finalização da poção
-        self.ingredients_sequence.clear()  # Limpa a sequência de ingredientes
+        # Atualizar a animação do Doom Guy
+        self.doom_guy_situation = 1
 
     def reset_simulation(self):
-        self.afd.reset()  # Reseta o AFD
-        self.ingredients_sequence.clear()  # Limpa a sequência de ingredientes
-        self.terminal.delete(1.0, tk.END)  # Limpa o terminal
-        self.show_ingredient("")  # Limpa a imagem do ingrediente
-        self.ingredient_entry.delete(0, tk.END)  # Limpa a entrada de ingredientes
+        # Reseta a simulação
+        self.terminal.delete(1.0, tk.END)
+        self.ingredients_sequence = []
+        self.afd.reset()
+        self.update_ingredient_image_and_description('')
+        self.doom_guy_situation = 0  # Reseta o estado da animação
 
 if __name__ == "__main__":
     app = IngredientSimulator()

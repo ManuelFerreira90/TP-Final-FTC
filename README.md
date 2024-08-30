@@ -18,7 +18,6 @@
 
 <p>Ao clicar nesse botão, uma janela será apresentada para selecionar um documento <code>.txt</code> contendo as informações sobre o autômato.</p>
 
-<p>Após selecionar o arquivo, o autômato será carregado na memória, permitindo adicionar ingredientes na caixa de texto, adicionando o ingrediente por meio do botão "Adicionar Ingrediente".</p>
+<p>Após selecionar o arquivo, o autômato será carregado na memória, permitindo adicionar ingredientes na caixa de texto e adicioná-los utilizando o botão <strong>"Adicionar Ingrediente"</strong>.</p>
 
-
-A cada ingrediente adicionado, uma imagem representativa do ingrediente será vista na tela. Caso seja atingido algum estado de errado por meio de uma mistura errada de ingredientes, é automaticamente informado para o usuário. Caso seja atingido algum estado final, ou seja, a mistura dos ingredientes resultou em uma das poções finais, é automaticamente informado para o usuário.
+<p>A cada ingrediente adicionado, uma imagem representativa do ingrediente será exibida na tela. Caso um estado de erro seja atingido devido a uma mistura incorreta de ingredientes, uma mensagem será exibida automaticamente para o usuário. Se um estado final for atingido, indicando que a mistura dos ingredientes resultou em uma das poções finais, o usuário também será notificado automaticamente.</p>
