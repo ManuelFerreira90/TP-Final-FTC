@@ -55,17 +55,7 @@ class IngredientSimulator(tk.Tk):
         self.geometry("800x500")
         
         # Inicializa as descrições dos ingredientes
-        self.ingredient_descriptions = {
-            'a': 'Água - Essencial para a vida.',
-            'p': 'Pétalas - Usadas em poções de cura.',
-            'o': 'Óleo - Incompatível com água, usado em poções de resistência.',
-            'b': 'Sangue de Basilisco - Letal se unido em cinzas de Fênix (c). Fora isso fortalece o efeito das poções',
-            'c': 'Cinzas de Fênix - Revitalização e renascimento. Dá à poção propriedades de cura extrema.Só pode ser combinada com ingredientes neutros como água (a); misturar com escama de dragão (d) cancela seus efeitos. ',
-            'm': 'Raiz de Mandrágora - Essencial em poções de cura, revitalizando quem a consome. Deve ser combinada com pétalas (p) ou água (a) para funcionar corretamente; misturar com óleo (o) causa um efeito tóxico.',
-            'v': 'Vapor de Vulcão - Aumenta a temperatura da poção, intensificando seus efeitos. Restrições: Não pode ser misturado com água (a), se não...KABOOM.',
-            'd': 'Escama de Dragão - Dá à poção um efeito protetor, tornando-a útil em poções de defesa. Não pode ser misturada com ingredientes frágeis como pétalas (p), a delicadeza as suaviza e as deixa inúteis.',
-            'e': 'Poeira de Estrela - Sabe seu desejo que nunca se realizou? A sua estrela cadente foi refinada em poeira, tornando as poções mais potentes com sua mágica. Deve ser o último ingrediente adicionado; caso contrário, a poção falha, resultando em um estado de erro (e uma supernova).'
-        }
+        self.ingredient_descriptions = self.load_ingredient_descriptions()
 
         # Divisão em 2 colunas
         self.grid_columnconfigure(0, weight=1)  # Coluna esquerda
@@ -111,56 +101,65 @@ class IngredientSimulator(tk.Tk):
         self.load_doom_guy_image()
         self.animate_doom_guy()
 
+    def load_ingredient_descriptions(self, filename = "ingredientes.txt"):
+        descriptions = {}
+        with open(filename, 'r', encoding='utf-8') as file:
+                for line in file:
+                    key, description = line.strip().split(': ', 1)
+                    descriptions[key] = description
+    
+        return descriptions
+    
+    #Função responsável por carregar a imagem e animação da face do Doom Guy no canto inferior direito da tela
     def load_doom_guy_image(self):
-        # Paths for the images
-        doom_guy_path = "imagens/doom_guy/doom_guy_calm.png"
-        cover_path = "imagens/doom_guy/doom_guy_inventory_cover.png"
+
+
+        doom_guy_path = "imagens/doom_guy/doom_guy_calm.png" #Expressão calma 
+        cover_path = "imagens/doom_guy/doom_guy_inventory_cover.png" #Fundo preto 
 
         if os.path.exists(doom_guy_path) and os.path.exists(cover_path):
-            # Load Doom Guy image and convert to RGBA for transparency support
             doom_guy_image = Image.open(doom_guy_path).convert("RGBA")
-
-            # Load the cover image
             cover_image = Image.open(cover_path).convert("RGBA")
 
-            # Get dimensions of the Doom Guy image (assumes all faces have the same size)
-            face_width = 60
+            face_width = 60 #Ponto em que a primeira face acaba e a segunda começa, considerando as faces que estão em uma mesma imagem
             face_height = doom_guy_image.height
 
-            # Ensure cover image is in the same dimensions
             cover_image = cover_image.crop((0, 0, face_width, face_height))
 
-            # Create a transparent background with the same size as the Doom Guy face
+            # Utilizado para mesclar o fundo e a face
             background = Image.new('RGBA', (face_width, face_height), (0, 0, 0, 0))
 
-            # Composite the cover image onto the background
             background.paste(cover_image, (0, 0), cover_image)
 
-            # Create Doom Guy face images by compositing the animated faces on top of the background
-            self.doom_guy_faces = [
+
+            #Faces do Doom Guy para animação calma
+            self.doom_guy_faces_calm = [
                 ImageTk.PhotoImage(Image.alpha_composite(background, doom_guy_image.crop((0, 0, face_width, face_height)))),
                 ImageTk.PhotoImage(Image.alpha_composite(background, doom_guy_image.crop((face_width, 0, 2 * face_width, face_height)))),
                 ImageTk.PhotoImage(Image.alpha_composite(background, doom_guy_image.crop((2 * face_width, 0, 3 * face_width, face_height))))
             ]
-
-            # Create a label for the Doom Guy face and place it in the bottom right corner
-            self.doom_guy_label = tk.Label(self, image=self.doom_guy_faces[self.doom_guy_state])
+            if(self.doom_guy_situation == 0):
+                self.doom_guy_label = tk.Label(self, image=self.doom_guy_faces_calm[self.doom_guy_state])
+            
             self.doom_guy_label.place(relx=1.0, rely=1.0, anchor="se")  # Place in the bottom right corner
 
     def animate_doom_guy(self):
-        if self.doom_guy_situation == 0:
-            # Alterna entre os estados
+        if self.doom_guy_situation == 0: #Face esquerda
             self.doom_guy_faces_swapped += 1
-            if self.doom_guy_faces_swapped > 10:
-                self.doom_guy_state = 1
-                self.doom_guy_faces_swapped = 0
-            else:
+            if self.doom_guy_faces_swapped > 10: #Face do meio só aparece depois de certos frames no jogo original
+                self.doom_guy_state = 1 
+                self.doom_guy_faces_swapped = 0 #Face do meio
+
+
+            else: #Face direita
                 if self.doom_guy_state == 0:
-                    self.doom_guy_state = 2
+                    self.doom_guy_state = 2 #Face esquerda
+
                 else:
-                    self.doom_guy_state = 0
-        self.doom_guy_label.config(image=self.doom_guy_faces[self.doom_guy_state])
-        self.after(500, self.animate_doom_guy)
+                    self.doom_guy_state = 0 #Face direita
+        if(self.doom_guy_situation ==0):    
+            self.doom_guy_label.config(image=self.doom_guy_faces_calm[self.doom_guy_state])
+        self.after(700, self.animate_doom_guy) #0.7 segundos para troca de faces
 
     def add_ingredient(self):
         ingredient = self.ingredient_entry.get().strip().lower()

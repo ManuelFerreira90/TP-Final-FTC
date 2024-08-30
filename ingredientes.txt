@@ -1,0 +1,9 @@
+a: Água - Essencial para a vida.
+p: Pétalas - Usadas em poções de cura.
+o: Óleo - Incompatível com água, usado em poções de resistência.
+b: Sangue de Basilisco - Letal se unido em cinzas de Fênix (c). Fora isso fortalece o efeito das poções.
+c: Cinzas de Fênix - Revitalização e renascimento. Dá à poção propriedades de cura extrema. Só pode ser combinada com ingredientes neutros como água (a); misturar com escama de dragão (d) cancela seus efeitos.
+m: Raiz de Mandrágora - Essencial em poções de cura, revitalizando quem a consome. Deve ser combinada com pétalas (p) ou água (a) para funcionar corretamente; misturar com óleo (o) causa um efeito tóxico.
+v: Vapor de Vulcão - Aumenta a temperatura da poção, intensificando seus efeitos. Restrições: Não pode ser misturado com água (a), se não...KABOOM.
+d: Escama de Dragão - Dá à poção um efeito protetor, tornando-a útil em poções de defesa. Não pode ser misturada com ingredientes frágeis como pétalas (p), a delicadeza as suaviza e as deixa inúteis.
+e: Poeira de Estrela - Sabe seu desejo que nunca se realizou? A sua estrela cadente foi refinada em poeira, tornando as poções mais potentes com sua mágica. Deve ser o último ingrediente adicionado; caso contrário, a poção falha, resultando em um estado de erro (e uma supernova).
