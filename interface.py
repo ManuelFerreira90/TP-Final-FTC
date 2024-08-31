@@ -199,9 +199,7 @@ class IngredientSimulator(tk.Tk):
             self.terminal.see(tk.END)
             if  self.afd:
                 self.afd.process_input(ingredient)
-            if self.mt:
-                 self.mt.initialize_tape(ingredient)
-                 self.mt.process_input()
+           
                
                  
 
@@ -247,6 +245,8 @@ class IngredientSimulator(tk.Tk):
             else:
                     messagebox.showinfo("Não finalizado", f"O conjunto de ingredientes não resultado em um estado final ou um estado de erro!")
         if(self.mt):
+            self.mt.initialize_tape(self.ingredients_sequence)
+            self.mt.process_input()
             if(self.mt.is_accepted()):
                 ingredientes_total = ""
                 for ingredient in self.ingredients_sequence:
@@ -286,7 +286,10 @@ class IngredientSimulator(tk.Tk):
         self.description_text.delete(1.0, tk.END)
         self.description_text.config(state=tk.DISABLED)
         self.ingredients_sequence.clear()
-        self.afd.reset()
+        if(self.afd):
+            self.afd.reset()
+        if(self.mt):
+             self.mt.reset()
         self.change_situation(0)
         self.ingredient_image_label.config(image='')
 

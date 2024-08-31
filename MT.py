@@ -2,7 +2,8 @@ class MT:
     def __init__(self, states, transitions, initial_state, final_states, blank_symbol, error_state):
         self.states = states
         self.transitions = transitions
-        self.current_state = initial_state
+        self.initial_state = initial_state
+        self.current_state = self.initial_state
         self.final_states = final_states
         self.blank_symbol = blank_symbol
         self.error_state = error_state
@@ -64,6 +65,8 @@ class MT:
         self.current_state = self.initial_state
         self.head_position = 0
         self.states_passed = []
+        self.tape = []
+        self.tape_states = []
 
 def load_mt_from_file(filename):
     states = set()
