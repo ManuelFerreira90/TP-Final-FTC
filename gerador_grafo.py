@@ -2,6 +2,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 
+
+
 def ler_afd_arquivo(filename):
     """
     Reads the AFD (Deterministic Finite Automaton) from a file and returns a directed graph (DiGraph).
@@ -148,7 +150,7 @@ def ler_mt_arquivo(filename):
                         G.add_edge(init_state, next_state, label=label)
 
     return G
-def desenhar_grafo_grid(G):
+def desenhar_grafo_grid_afd(G):
     """
     Draws the AFD graph in a grid layout.
     
@@ -172,17 +174,12 @@ def desenhar_grafo_grid(G):
 
     final_states = [node for node, data in G.nodes(data=True) if data.get('final', False)]
     nx.draw_networkx_nodes(G, pos, nodelist=final_states, node_color='lightgreen', node_size=3000)
+    plt.get_current_fig_manager().window.state('zoomed')
     plt.show()
 
     
-def animate_with_button(G, transition_states):
-    """
-    Create an interactive plot of the AFD graph with a "Forward" button to transition states.
-    
-    Parameters:
-    - G: NetworkX DiGraph, the graph representation of the AFD.
-    - transition_states: List[str], the ordered states to highlight in red.
-    """
+def animate_with_button_afd(G, transition_states):
+   
    
 
     nodes = list(G.nodes())
@@ -228,6 +225,8 @@ def animate_with_button(G, transition_states):
     ax_button = plt.axes([0.4, 0.05, 0.2, 0.075])
     button = Button(ax_button, 'Próximo')
     button.on_clicked(forward)
+    plt.get_current_fig_manager().window.state('zoomed')
+
     plt.show()
 
 
@@ -257,6 +256,7 @@ def desenhar_grafo_grid_mt(G):
 
     final_states = [node for node, data in G.nodes(data=True) if data.get('final', False)]
     nx.draw_networkx_nodes(G, pos, nodelist=final_states, node_color='lightgreen', node_size=3000)
+    plt.get_current_fig_manager().window.state('zoomed')
 
     plt.show()
 
@@ -329,4 +329,6 @@ def animated_button_mt(G, transition_states, stack_changes):
     ax_button = plt.axes([0.4, 0.05, 0.2, 0.075])
     button = Button(ax_button, 'Próximo')
     button.on_clicked(forward)
+    plt.get_current_fig_manager().window.state('zoomed')
+
     plt.show()

@@ -8,7 +8,7 @@ from MT import *
 class IngredientSimulator(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.state('zoomed')
+        self.attributes('-fullscreen', True)
         self.bind("<Escape>", lambda event: self.attributes('-fullscreen', False))
 
         self.title("Simulador de Poções")
@@ -226,7 +226,7 @@ class IngredientSimulator(tk.Tk):
                 for ingredient in self.ingredients_sequence:
                     ingredientes_total += f" - {ingredient}\n"
                 self.change_situation(2)
-                messagebox.showinfo("Sucesso", f"Poção Finalizada com Ingredientes:\n {ingredientes_total}")
+                messagebox.showinfo("Sucesso", f"Poção Finalizada com Ingredientes:\n{ingredientes_total}")
                 self.terminal.insert(tk.END, f"Estado Final atingido! \n")
                 self.terminal.see(tk.END)
                 self.ingredients_sequence.clear()
@@ -240,7 +240,7 @@ class IngredientSimulator(tk.Tk):
             if(self.afd.is_accepted() or self.afd.is_rejected):
                 opcao = messagebox.askyesno("Percorrimento do AFD", ". Gostaria de visualizar o percorrimento do AFD?")
                 if(opcao):
-                    animate_with_button(self.Grafo, self.afd.states_passed)
+                    animate_with_button_afd(self.Grafo, self.afd.states_passed)
                 self.reset_simulation()
             else:
                     messagebox.showinfo("Não finalizado", f"O conjunto de ingredientes não resultado em um estado final ou um estado de erro!")
@@ -252,7 +252,7 @@ class IngredientSimulator(tk.Tk):
                 for ingredient in self.ingredients_sequence:
                     ingredientes_total += f" - {ingredient}\n"
                 self.change_situation(2)
-                messagebox.showinfo("Sucesso", f"Poção Finalizada com Ingredientes:\n {ingredientes_total}")
+                messagebox.showinfo("Sucesso", f"Poção Finalizada com Ingredientes:\n{ingredientes_total}")
                 self.terminal.insert(tk.END, f"Estado Final atingido! \n")
                 self.terminal.see(tk.END)
                 self.ingredients_sequence.clear()
@@ -296,7 +296,7 @@ class IngredientSimulator(tk.Tk):
     def show_graph(self):
         if self.Grafo:
             if self.afd:
-                desenhar_grafo_grid(self.Grafo)
+                desenhar_grafo_grid_afd(self.Grafo)
             if self.mt:
                  desenhar_grafo_grid_mt(self.Grafo)
                  
