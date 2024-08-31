@@ -6,7 +6,7 @@ class AFD:
         self.final_state = final_state
         self.initial_state = initial_state
         self.error_state = error_state
-        self.states_passed = []
+        self.states_passed = [initial_state]
 
     def process_input(self, input_char):
         if self.current_state in self.transitions:

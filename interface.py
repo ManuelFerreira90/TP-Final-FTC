@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 import os
 from gerador_grafo import *
 from AFD import *
+from MT import * 
 class IngredientSimulator(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -13,6 +14,7 @@ class IngredientSimulator(tk.Tk):
         self.title("Simulador de Poções")
         self.geometry("800x500")
         self.afd = None
+        self.mt = None
         self.ingredient_descriptions = self.load_ingredient_descriptions()
         self.ingredients_sequence = []
 
@@ -33,7 +35,8 @@ class IngredientSimulator(tk.Tk):
         self.config(menu=menu)
         file_menu = tk.Menu(menu, tearoff=0)
         menu.add_cascade(label="Arquivo", menu=file_menu)
-        file_menu.add_command(label="Carregar Automato", command=self.load_automaton)
+        file_menu.add_command(label="Carregar AFD", command=self.load_afd)
+        file_menu.add_command(label="Carregar MT", command=self.load_mt)
         file_menu.add_separator()
         file_menu.add_command(label="Sair", command=self.quit)
 
@@ -154,7 +157,7 @@ class IngredientSimulator(tk.Tk):
         self.doom_guy_label.config(image=self.doom_guy_faces[self.doom_guy_state])
         self.after(700, self.animate_doom_guy)
 
-    def load_automaton(self):
+    def load_afd(self):
         file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
         if file_path:
             self.afd = load_afd_from_file(file_path)
@@ -162,27 +165,45 @@ class IngredientSimulator(tk.Tk):
             self.Grafo = ler_afd_arquivo(file_path)
             messagebox.showinfo("Sucesso", "Automato carregado com sucesso.")
 
+    def load_mt(self):
+        file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
+        if file_path:
+            self.mt = load_mt_from_file(file_path)
+            self.update_buttons_state()
+            self.Grafo = ler_mt_arquivo(file_path)
+            messagebox.showinfo("Sucesso", "MT carregado com sucesso.")
+
 
     def update_buttons_state(self):
-        state = tk.NORMAL if self.afd else tk.DISABLED
+        state = tk.NORMAL if (self.afd or self.mt) else tk.DISABLED
         self.add_button.config(state=state)
         self.finish_button.config(state=state)
         self.see_graph.config(state=state)
         self.reset_button.config(state=state)
-
+    def check_ingredients_mt(self,ingredients):
+        for ingredient in ingredients:
+             if ingredient not in self.ingredient_descriptions:
+                  return False
+        return True
     def add_ingredient(self):
-        if not self.afd:
+        if not self.afd and not self.mt:
             messagebox.showerror("Erro", "Automato não carregado.")
             return
 
         ingredient = self.ingredient_entry.get()
-        if ingredient in self.ingredient_descriptions:
+        if ((ingredient in self.ingredient_descriptions and self.afd) or (self.mt and self.check_ingredients_mt(ingredient))):
             self.ingredients_sequence.append(ingredient)
             self.ingredient_entry.delete(0, tk.END)
 
             self.terminal.insert(tk.END, f"Ingrediente Adicionado: {ingredient}\n")
             self.terminal.see(tk.END)
-            self.afd.process_input(ingredient)
+            if  self.afd:
+                self.afd.process_input(ingredient)
+            if self.mt:
+                 self.mt.initialize_tape(ingredient)
+                 self.mt.process_input()
+               
+                 
 
             self.description_text.config(state=tk.NORMAL)
             self.description_text.delete(1.0, tk.END)
@@ -201,30 +222,56 @@ class IngredientSimulator(tk.Tk):
             self.terminal.see(tk.END)
 
     def finalize_potion(self):
-        if(self.afd.is_accepted()):
-            ingredientes_total = ""
-            for ingredient in self.ingredients_sequence:
-                ingredientes_total += f" - {ingredient}\n"
-            self.change_situation(2)
-            messagebox.showinfo("Sucesso", f"Poção Finalizada com Ingredientes:\n {ingredientes_total}")
-            self.terminal.insert(tk.END, f"Estado Final atingido! \n")
-            self.terminal.see(tk.END)
-            self.ingredients_sequence.clear()
-            self.ingredient_entry.delete(0, tk.END)
-            
-        elif(self.afd.is_rejected()):
-                self.change_situation(1)
-                messagebox.showerror("Erro", f"O conjunto de ingredientes resultou em um estado de erro!")
-                self.terminal.insert(tk.END, f"Estado de Erro atingido! \n")
+        if(self.afd):
+            if(self.afd.is_accepted()):
+                ingredientes_total = ""
+                for ingredient in self.ingredients_sequence:
+                    ingredientes_total += f" - {ingredient}\n"
+                self.change_situation(2)
+                messagebox.showinfo("Sucesso", f"Poção Finalizada com Ingredientes:\n {ingredientes_total}")
+                self.terminal.insert(tk.END, f"Estado Final atingido! \n")
+                self.terminal.see(tk.END)
+                self.ingredients_sequence.clear()
+                self.ingredient_entry.delete(0, tk.END)
+                
+            elif(self.afd.is_rejected()):
+                    self.change_situation(1)
+                    messagebox.showerror("Erro", f"O conjunto de ingredientes resultou em um estado de erro!")
+                    self.terminal.insert(tk.END, f"Estado de Erro atingido! \n")
 
-        if(self.afd.is_accepted() or self.afd.is_rejected):
-            opcao = messagebox.askyesno("Percorrimento do AFD", ". Gostaria de visualizar o percorrimento do AFD?")
-            if(opcao):
-                 animate_with_button(self.Grafo, self.afd.states_passed)
-            self.reset_simulation()
-        else:
-                messagebox.showinfo("Não finalizado", f"O conjunto de ingredientes não resultado em um estado final ou um estado de erro!")
+            if(self.afd.is_accepted() or self.afd.is_rejected):
+                opcao = messagebox.askyesno("Percorrimento do AFD", ". Gostaria de visualizar o percorrimento do AFD?")
+                if(opcao):
+                    animate_with_button(self.Grafo, self.afd.states_passed)
+                self.reset_simulation()
+            else:
+                    messagebox.showinfo("Não finalizado", f"O conjunto de ingredientes não resultado em um estado final ou um estado de erro!")
+        if(self.mt):
+            if(self.mt.is_accepted()):
+                ingredientes_total = ""
+                for ingredient in self.ingredients_sequence:
+                    ingredientes_total += f" - {ingredient}\n"
+                self.change_situation(2)
+                messagebox.showinfo("Sucesso", f"Poção Finalizada com Ingredientes:\n {ingredientes_total}")
+                self.terminal.insert(tk.END, f"Estado Final atingido! \n")
+                self.terminal.see(tk.END)
+                self.ingredients_sequence.clear()
+                self.ingredient_entry.delete(0, tk.END)
+                
+            elif(self.mt.is_rejected()):
+                    self.change_situation(1)
+                    messagebox.showerror("Erro", f"O conjunto de ingredientes resultou em um estado de erro!")
+                    self.terminal.insert(tk.END, f"Estado de Erro atingido! \n")
 
+            if(self.mt.is_accepted() or self.mt.is_rejected):
+                opcao = messagebox.askyesno("Percorrimento da MT", ". Gostaria de visualizar o percorrimento da MT?")
+                if(opcao):
+                    animated_button_mt(self.Grafo, self.mt.states_passed,self.mt.tape_states)
+                self.reset_simulation()
+            else:
+                    messagebox.showinfo("Não finalizado", f"O conjunto de ingredientes não resultado em um estado final ou um estado de erro!")
+
+             
 
 
 
@@ -245,7 +292,11 @@ class IngredientSimulator(tk.Tk):
 
     def show_graph(self):
         if self.Grafo:
-            desenhar_grafo_grid(self.Grafo)
+            if self.afd:
+                desenhar_grafo_grid(self.Grafo)
+            if self.mt:
+                 desenhar_grafo_grid_mt(self.Grafo)
+                 
 
 if __name__ == "__main__":
     app = IngredientSimulator()
