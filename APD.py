@@ -7,35 +7,14 @@ class APD:
         self.initial_state = initial_state
         self.error_state = error_state
         self.states_passed = [initial_state]
-<<<<<<< Updated upstream
-        self.pilha = ['&']
-        self.topoDaPilha = 0
-=======
         self.pilha = []
         self.pilha_states = []
         self.pilha_states.append(self.pilha.copy())
->>>>>>> Stashed changes
 
     def process_input(self, input_char):
         if self.current_state in self.transitions:
             for (next_state, char, desempilha, empilha) in self.transitions[self.current_state]:#obtem as transicoes possiveis a partir do estado atual 
                 if char == input_char:
-<<<<<<< Updated upstream
-                    if desempilha == self.pilha[self.topoDaPilha] or desempilha == '&':
-                        print(self.current_state)
-                        self.current_state = next_state
-                        self.states_passed.append(self.current_state)
-
-                        if desempilha == self.pilha[self.topoDaPilha] and desempilha != '&':
-                            self.pilha.remove(desempilha)
-                            self.topoDaPilha -= 1
-
-                        if(empilha != '&'):
-                            self.pilha.append(empilha)
-                            self.topoDaPilha += 1
-
-                    else:
-=======
                     if desempilha ==self.topo() or desempilha == '&':#verifica se a transicao e valida
                         self.current_state = next_state
                         self.states_passed.append(self.current_state)
@@ -47,7 +26,6 @@ class APD:
                             self.empilhar(empilha)
                         
                     else:#se a transicao nao for valida vai para o estado de erro
->>>>>>> Stashed changes
                         break
 
                     return
@@ -55,8 +33,6 @@ class APD:
         self.current_state = self.error_state
         self.states_passed.append(self.current_state)
 
-<<<<<<< Updated upstream
-=======
     def empilhar(self, item):
         self.pilha.append(item)
         self.pilha_states.append(self.pilha.copy())
@@ -77,10 +53,9 @@ class APD:
 
     def tamanho(self):
         return len(self.pilha)
->>>>>>> Stashed changes
 
     def is_accepted(self):
-        return self.current_state == self.final_state
+        return ((self.current_state == self.final_state) and  self.esta_vazia() )
 
     def is_rejected(self):
         return self.current_state == self.error_state
@@ -89,7 +64,6 @@ class APD:
         self.states_passed = []
         self.current_state = self.initial_state
         self.pilha = []
-        self.topoDaPilha = 0
 
 def load_APD_from_file(filename):
     with open(filename, 'r') as file:
@@ -114,26 +88,4 @@ def load_APD_from_file(filename):
         transitions[current_state].append((next_state, char, desempilha, empilha))#monta o vetor de trasocao
 
     error_state = [state for state in states_line if 'erro' in state][0]
-<<<<<<< Updated upstream
-    return APD(states_line, transitions,initial_state, final_state, error_state)
-
-# Carregar o AFD a partir do arquivo
-apd = load_APD_from_file('apd_imput.txt')
-
-# Interação com o usuário
-while True:
-    ingrediente = input("Insira o símbolo do ingrediente: ")
-    apd.process_input(ingrediente)
-    if apd.current_state == apd.error_state:
-        break
-    continuar = input("Deseja inserir mais um ingrediente (s/n)? ")
-    if continuar.lower() != 's':
-        break
-
-if apd.is_accepted():
-    print("Poção criada com sucesso!")
-else:
-    print("Erro na mistura")
-=======
     return APD(states_line, transitions,initial_state, final_state, error_state)#cria o APD
->>>>>>> Stashed changes
