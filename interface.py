@@ -97,6 +97,10 @@ class IngredientSimulator(tk.Tk):
              doom_guy_path = "imagens/doom_guy/doom_guy_surprised.png"
         elif(self.doom_guy_situation == 2):
               doom_guy_path = "imagens/doom_guy/doom_guy_happy.png"
+        elif(self.doom_guy_situation == 3):
+              doom_guy_path = "imagens/doom_guy/doom_guy_beaten.png"
+        elif(self.doom_guy_situation == 4):
+              doom_guy_path = "imagens/doom_guy/doom_guy_god.png"
              
         cover_path = "imagens/doom_guy/doom_guy_inventory_cover.png"
 
@@ -134,6 +138,26 @@ class IngredientSimulator(tk.Tk):
 
 
                 ]
+                  
+            if(self.doom_guy_situation == 3):
+                  self.doom_guy_faces = [
+                    ImageTk.PhotoImage(Image.alpha_composite(background, doom_guy_image.crop((0, 0, face_width, face_height)))),
+                    ImageTk.PhotoImage(Image.alpha_composite(background, doom_guy_image.crop((0, 0, face_width, face_height)))),
+                    ImageTk.PhotoImage(Image.alpha_composite(background, doom_guy_image.crop((face_width, 0, 2 * face_width, face_height)))),
+
+
+                ]
+
+            if(self.doom_guy_situation == 4):
+                  self.doom_guy_faces = [
+                    ImageTk.PhotoImage(Image.alpha_composite(background, doom_guy_image.crop((0, 0, face_width, face_height)))),
+                    ImageTk.PhotoImage(Image.alpha_composite(background, doom_guy_image.crop((2 * face_width, 0, 3 * face_width, face_height)))),
+
+                    #ImageTk.PhotoImage(Image.alpha_composite(background, doom_guy_image.crop((face_width, 0, 2 * face_width, face_height))))
+                    ImageTk.PhotoImage(Image.alpha_composite(background, doom_guy_image.crop((0, 0, face_width, face_height)))),
+
+
+                ]
 
                  
             # Inicializando o label do Doom Guy com a primeira face
@@ -158,6 +182,11 @@ class IngredientSimulator(tk.Tk):
         self.after(700, self.animate_doom_guy)
 
     def load_afd(self):
+        self.reset_simulation()
+
+       
+
+
         file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
         if file_path:
             self.afd = load_afd_from_file(file_path)
@@ -166,6 +195,9 @@ class IngredientSimulator(tk.Tk):
             messagebox.showinfo("Sucesso", "Automato carregado com sucesso.")
 
     def load_mt(self):
+        self.mt = None
+        self.afd = None
+
         file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
         if file_path:
             self.mt = load_mt_from_file(file_path)
@@ -251,7 +283,7 @@ class IngredientSimulator(tk.Tk):
                 ingredientes_total = ""
                 for ingredient in self.ingredients_sequence:
                     ingredientes_total += f" - {ingredient}\n"
-                self.change_situation(2)
+                self.change_situation(4)
                 messagebox.showinfo("Sucesso", f"Poção Finalizada com Ingredientes:\n{ingredientes_total}")
                 self.terminal.insert(tk.END, f"Estado Final atingido! \n")
                 self.terminal.see(tk.END)
@@ -259,7 +291,7 @@ class IngredientSimulator(tk.Tk):
                 self.ingredient_entry.delete(0, tk.END)
                 
             elif(self.mt.is_rejected()):
-                    self.change_situation(1)
+                    self.change_situation(3)
                     messagebox.showerror("Erro", f"O conjunto de ingredientes resultou em um estado de erro!")
                     self.terminal.insert(tk.END, f"Estado de Erro atingido! \n")
 
@@ -292,6 +324,8 @@ class IngredientSimulator(tk.Tk):
              self.mt.reset()
         self.change_situation(0)
         self.ingredient_image_label.config(image='')
+        self.afd = None
+        self.mt = None
 
     def show_graph(self):
         if self.Grafo:
@@ -301,6 +335,4 @@ class IngredientSimulator(tk.Tk):
                  desenhar_grafo_grid_mt(self.Grafo)
                  
 
-if __name__ == "__main__":
-    app = IngredientSimulator()
-    app.mainloop()
+
