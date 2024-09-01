@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 import os
 from gerador_grafo import *
 from AFD import *
+from APD import *
 from MT import * 
 class IngredientSimulator(tk.Tk):
     def __init__(self):
@@ -15,6 +16,7 @@ class IngredientSimulator(tk.Tk):
         self.geometry("800x500")
         self.afd = None
         self.mt = None
+        self.apd = None
         self.ingredient_descriptions = self.load_ingredient_descriptions()
         self.ingredients_sequence = []
 
@@ -36,6 +38,7 @@ class IngredientSimulator(tk.Tk):
         file_menu = tk.Menu(menu, tearoff=0)
         menu.add_cascade(label="Arquivo", menu=file_menu)
         file_menu.add_command(label="Carregar AFD", command=self.load_afd)
+        file_menu.add_command(label="Carregar APD", command=self.load_apd)
         file_menu.add_command(label="Carregar MT", command=self.load_mt)
         file_menu.add_separator()
         file_menu.add_command(label="Sair", command=self.quit)
@@ -194,6 +197,17 @@ class IngredientSimulator(tk.Tk):
             self.Grafo = ler_afd_arquivo(file_path)
             messagebox.showinfo("Sucesso", "Automato carregado com sucesso.")
 
+    def load_apd(self):
+        self.reset_simulation()
+
+       
+        file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
+        if file_path:
+            self.afd = load_APD_from_file(file_path)
+            self.update_buttons_state()
+            #self.Grafo = ler_afd_arquivo(file_path)
+            messagebox.showinfo("Sucesso", "Automato carregado com sucesso.")
+
     def load_mt(self):
         self.mt = None
         self.afd = None
@@ -223,7 +237,7 @@ class IngredientSimulator(tk.Tk):
             return
 
         ingredient = self.ingredient_entry.get()
-        if ((ingredient in self.ingredient_descriptions and self.afd) or (self.mt and self.check_ingredients_mt(ingredient))):
+        if ((ingredient in self.ingredient_descriptions and self.afd) or (ingredient in self.ingredient_descriptions and self.apd) or (self.mt and self.check_ingredients_mt(ingredient))):
             self.ingredients_sequence.append(ingredient)
             self.ingredient_entry.delete(0, tk.END)
 
@@ -231,6 +245,9 @@ class IngredientSimulator(tk.Tk):
             self.terminal.see(tk.END)
             if  self.afd:
                 self.afd.process_input(ingredient)
+            if  self.apd:
+                self.apd.process_input(ingredient)
+           
            
                
                  
@@ -269,13 +286,43 @@ class IngredientSimulator(tk.Tk):
                     messagebox.showerror("Erro", f"O conjunto de ingredientes resultou em um estado de erro!")
                     self.terminal.insert(tk.END, f"Estado de Erro atingido! \n")
 
-            if(self.afd.is_accepted() or self.afd.is_rejected):
+            if(self.afd.is_accepted() or self.afd.is_rejected()):
                 opcao = messagebox.askyesno("Percorrimento do AFD", ". Gostaria de visualizar o percorrimento do AFD?")
                 if(opcao):
                     animate_with_button_afd(self.Grafo, self.afd.states_passed)
                 self.reset_simulation()
             else:
                     messagebox.showinfo("Não finalizado", f"O conjunto de ingredientes não resultado em um estado final ou um estado de erro!")
+        
+        if(self.apd):
+            if(self.apd.is_accepted()):
+                ingredientes_total = ""
+                for ingredient in self.ingredients_sequence:
+                    ingredientes_total += f" - {ingredient}\n"
+                self.change_situation(2)
+                messagebox.showinfo("Sucesso", f"Poção Finalizada com Ingredientes:\n{ingredientes_total}")
+                self.terminal.insert(tk.END, f"Estado Final atingido! \n")
+                self.terminal.see(tk.END)
+                self.ingredients_sequence.clear()
+                self.ingredient_entry.delete(0, tk.END)
+                
+            elif(self.apd.is_rejected()):
+                    self.change_situation(1)
+                    messagebox.showerror("Erro", f"O conjunto de ingredientes resultou em um estado de erro!")
+                    self.terminal.insert(tk.END, f"Estado de Erro atingido! \n")
+
+            if(self.apd.is_accepted() or self.apd.is_rejected()):
+                opcao = messagebox.askyesno("Percorrimento do APD", ". Gostaria de visualizar o percorrimento do APD?")
+                if(opcao):
+                    pass
+                    #animate_with_button_afd(self.Grafo, self.apd)
+                self.reset_simulation()
+            else:
+                    messagebox.showinfo("Não finalizado", f"O conjunto de ingredientes não resultado em um estado final ou um estado de erro!")
+        
+        
+        
+        
         if(self.mt):
             self.mt.initialize_tape(self.ingredients_sequence)
             self.mt.process_input()
@@ -322,10 +369,15 @@ class IngredientSimulator(tk.Tk):
             self.afd.reset()
         if(self.mt):
              self.mt.reset()
+        if(self.apd):
+             self.apd.reset()
         self.change_situation(0)
         self.ingredient_image_label.config(image='')
+
+        
         self.afd = None
         self.mt = None
+        self.apd = None
 
     def show_graph(self):
         if self.Grafo:
