@@ -22,7 +22,8 @@ class AFD:
 
 
     def is_accepted(self):
-        return self.current_state == self.final_state
+
+        return self.current_state == self.final_state 
 
     def is_rejected(self):
         return self.current_state == self.error_state
