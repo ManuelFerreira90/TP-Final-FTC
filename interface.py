@@ -6,14 +6,17 @@ from gerador_grafo import *
 from AFD import *
 from APD import *
 from MT import * 
+
+##Responsável pela interface gráfica tkinter
+
 class IngredientSimulator(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.attributes('-fullscreen', True)
+        self.attributes('-fullscreen', True)  ##Tela cheia padrão
         self.bind("<Escape>", lambda event: self.attributes('-fullscreen', False))
 
         self.title("Simulador de Poções")
-        self.geometry("800x500")
+        self.geometry("800x500") #Tela normal padrão
         self.afd = None
         self.mt = None
         self.apd = None
@@ -26,12 +29,15 @@ class IngredientSimulator(tk.Tk):
 
         self.create_menu()
         self.create_widgets()
-        self.doom_guy_situation = 0
-        self.doom_guy_state = 1
-        self.doom_guy_faces_swapped = 0
-        self.load_doom_guy_image()
-        self.animate_doom_guy()
+        
+        self.doom_guy_situation = 0 #Estado calmo
+        self.doom_guy_state = 1 #Rosto do meio
+        self.doom_guy_faces_swapped = 0 #Responsável pela mudança da animação
+        self.load_doom_guy_image() ##Carrega o rosto do Doom Guy
+        self.animate_doom_guy() ##Animação do rosto do Doom Guy
 
+
+    #Menu superior para carregar autômatos/máquinas
     def create_menu(self):
         menu = tk.Menu(self)
         self.config(menu=menu)
@@ -45,6 +51,7 @@ class IngredientSimulator(tk.Tk):
         file_menu.add_separator()
         file_menu.add_command(label="Sair", command=self.quit)
 
+    ##Botões para interagir com autômatos/máquinas
     def create_widgets(self):
         self.terminal = tk.Text(self, bg="black", fg="white", font=("Courier", 12), width=40, height=20)
         self.terminal.grid(row=0, column=0, sticky="nsew")
@@ -58,7 +65,7 @@ class IngredientSimulator(tk.Tk):
         self.ingredient_entry = tk.Entry(self, font=("Arial", 14))
         self.ingredient_entry.grid(row=2, column=0, columnspan=2, pady=10)
 
-        button_width = 20
+        button_width = 25
 
         self.add_button = tk.Button(self, text="Adicionar Ingrediente", width=button_width, command=self.add_ingredient)
         self.add_button.grid(row=3, column=0, columnspan=2, padx=10, pady=5)
@@ -66,7 +73,7 @@ class IngredientSimulator(tk.Tk):
         self.finish_button = tk.Button(self, text="Finalizar Poção", width=button_width, command=self.finalize_potion)
         self.finish_button.grid(row=4, column=0, columnspan=2, padx=10, pady=5)
 
-        self.see_graph = tk.Button(self, text="Visualizar Automato", width=button_width, command=self.show_graph)
+        self.see_graph = tk.Button(self, text="Visualizar Autômato/Máquina", width=button_width, command=self.show_graph)
         self.see_graph.grid(row=5, column=0, columnspan=2, padx=10, pady=5)
 
         self.reset_button = tk.Button(self, text="Resetar", width=button_width, command=self.reset_simulation)
@@ -74,6 +81,7 @@ class IngredientSimulator(tk.Tk):
 
         self.update_buttons_state()
 
+    #Carrega a descrição e nome do ingrediente que o usuário escolheu no arquivo "ingredientes.txt"
     def load_ingredient_descriptions(self, filename="ingredientes.txt"):
         descriptions = {}
         with open(filename, 'r', encoding='utf-8') as file:
@@ -81,6 +89,9 @@ class IngredientSimulator(tk.Tk):
                 key, description = line.strip().split(': ', 1)
                 descriptions[key] = description
         return descriptions
+    
+
+    #Carrega a imagem do ingrediente que o usuário escolheu no arquivo "ingredientes.txt"
 
     def load_ingredient_image(self, ingredient):
         image_path = f"imagens/ingredientes/{ingredient}.jpg"
@@ -92,9 +103,14 @@ class IngredientSimulator(tk.Tk):
             print(f"Imagem não encontrada para o ingrediente: {ingredient}")
             return None
         
+    #Muda a face do Doom Guy
+
     def change_situation(self,num):
          self.doom_guy_situation = num
          self.load_doom_guy_image()
+
+
+    #Carrega imagem e animação do Doom Guy
     def load_doom_guy_image(self):
         if(self.doom_guy_situation == 0):
             doom_guy_path = "imagens/doom_guy/doom_guy_calm.png"
@@ -169,9 +185,8 @@ class IngredientSimulator(tk.Tk):
              
             self.doom_guy_label = tk.Label(self, image=self.doom_guy_faces[self.doom_guy_state])
             self.doom_guy_label.place(relx=1.0, rely=1.0, anchor="se")
-        else:
-            print("Caminho para as imagens está incorreto ou imagens não encontradas.")
-
+        
+    #Animação do Doom Guy
     def animate_doom_guy(self):
      
         self.doom_guy_faces_swapped += 1
@@ -186,12 +201,11 @@ class IngredientSimulator(tk.Tk):
         self.doom_guy_label.config(image=self.doom_guy_faces[self.doom_guy_state])
         self.after(700, self.animate_doom_guy)
 
+    #Carrega o Autômato Finito quando o usuário escolhe a opção
     def load_afd(self):
-        self.reset_simulation()
+        self.reset_simulation() #Reseta antes de carregar
 
        
-
-
         file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
         if file_path:
             self.afd = load_afd_from_file(file_path)
@@ -199,16 +213,19 @@ class IngredientSimulator(tk.Tk):
             self.Grafo = ler_afd_arquivo(file_path)
             messagebox.showinfo("Sucesso", "Automato carregado com sucesso.")
 
-    def load_apd(self):
-        self.reset_simulation()
+    #Carrega o Autômato de Pilha quando o usuário escolhe a opção
 
-       
+    def load_apd(self):
+        self.reset_simulation() #Reseta antes de carregar
+
         file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
         if file_path:
             self.apd = load_APD_from_file(file_path)
             self.update_buttons_state()
             self.Grafo = ler_apd_arquivo(file_path)
             messagebox.showinfo("Sucesso", "Automato carregado com sucesso.")
+
+    #Carrega a Máquina de Turing quando o usuário escolhe a opção
 
     def load_mt(self):
         self.mt = None
@@ -222,23 +239,32 @@ class IngredientSimulator(tk.Tk):
             messagebox.showinfo("Sucesso", "MT carregado com sucesso.")
 
 
+    #Botões devem estar bloqueados se nenhuma máquina ou autômato estiver carregada
     def update_buttons_state(self):
         state = tk.NORMAL if (self.afd or self.mt or self.apd) else tk.DISABLED
         self.add_button.config(state=state)
         self.finish_button.config(state=state)
         self.see_graph.config(state=state)
         self.reset_button.config(state=state)
-    def check_ingredients_mt(self,ingredients):
-        for ingredient in ingredients:
-             if ingredient not in self.ingredient_descriptions:
-                  return False
-        return True
+
+    
+
+    #def check_ingredients_mt(self,ingredients):
+    #    for ingredient in ingredients:
+    #         if ingredient not in self.ingredient_descriptions:
+    #              return False
+    #    return True
+
+    #Adição de ingrediente nas máquinas e autômatos
     def add_ingredient(self):
         if not self.afd and not self.mt and not self.apd:
             messagebox.showerror("Erro", "Automato não carregado.")
             return
 
         ingredient = self.ingredient_entry.get()
+
+        #Ingrediente é valido? Alguma máquina ou autômato está carregada?
+        #Se sim, processe o input para uma delas, a que existir
         if ((ingredient in self.ingredient_descriptions and self.afd) or (ingredient in self.ingredient_descriptions and self.apd) or (self.mt and self.check_ingredients_mt(ingredient))):
             self.ingredients_sequence.append(ingredient)
             self.ingredient_entry.delete(0, tk.END)
@@ -259,6 +285,7 @@ class IngredientSimulator(tk.Tk):
             self.description_text.insert(tk.END, self.ingredient_descriptions[ingredient])
             self.description_text.config(state=tk.DISABLED)
 
+            #Carrega imagem do ingrediente
             ingredient_image = self.load_ingredient_image(ingredient)
             if ingredient_image:
                     self.ingredient_image_label.config(image=ingredient_image)
@@ -267,12 +294,13 @@ class IngredientSimulator(tk.Tk):
                     self.ingredient_image_label.config(image='')
           
         else:
-            self.terminal.insert(tk.END, f"Ingrediente Desconhecido: {ingredient}\n")
+            self.terminal.insert(tk.END, f"Ingrediente Desconhecido: {ingredient}\n") #Ingrediente não está na lista
             self.terminal.see(tk.END)
 
-    def finalize_potion(self):
-        if(self.afd):
-            if(self.afd.is_accepted()):
+    #Ao clicar botão para finalizar poção
+    def finalize_potion(self): 
+        if(self.afd): #Se existir AFD
+            if(self.afd.is_accepted()): #Achou estado final? Se sim, avise ao usuário
                 ingredientes_total = ""
                 for ingredient in self.ingredients_sequence:
                     ingredientes_total += f" - {ingredient}\n"
@@ -283,12 +311,12 @@ class IngredientSimulator(tk.Tk):
                 self.ingredients_sequence.clear()
                 self.ingredient_entry.delete(0, tk.END)
                 
-            elif(self.afd.is_rejected()):
+            elif(self.afd.is_rejected()): #Achou estado de erro? Se sim, avise ao usuário
                     self.change_situation(1)
                     messagebox.showerror("Erro", f"O conjunto de ingredientes resultou em um estado de erro!")
                     self.terminal.insert(tk.END, f"Estado de Erro atingido! \n")
 
-            if(self.afd.is_accepted() or self.afd.is_rejected()):
+            if(self.afd.is_accepted() or self.afd.is_rejected()):  #Se foi aceito ou rejeitado, usuário pode percorrer a AFD para ver o que ocorreu
                 opcao = messagebox.askyesno("Percorrimento do AFD", ". Gostaria de visualizar o percorrimento do AFD?")
                 if(opcao):
                     animate_with_button_afd(self.Grafo, self.afd.states_passed)
@@ -296,8 +324,8 @@ class IngredientSimulator(tk.Tk):
             else:
                     messagebox.showinfo("Não finalizado", f"O conjunto de ingredientes não resultado em um estado final ou um estado de erro!")
         
-        if(self.apd):
-            if(self.apd.is_accepted()):
+        if(self.apd): #Se existir APD
+            if(self.apd.is_accepted()): #Achou estado final? Se sim, avise ao usuário
                 ingredientes_total = ""
                 for ingredient in self.ingredients_sequence:
                     ingredientes_total += f" - {ingredient}\n"
@@ -308,12 +336,12 @@ class IngredientSimulator(tk.Tk):
                 self.ingredients_sequence.clear()
                 self.ingredient_entry.delete(0, tk.END)
                 
-            elif(self.apd.is_rejected()):
+            elif(self.apd.is_rejected()): #Achou estado de erro? Se sim, avise ao usuário
                     self.change_situation(1)
                     messagebox.showerror("Erro", f"O conjunto de ingredientes resultou em um estado de erro!")
                     self.terminal.insert(tk.END, f"Estado de Erro atingido! \n")
 
-            if(self.apd.is_accepted() or self.apd.is_rejected()):
+            if(self.apd.is_accepted() or self.apd.is_rejected()):  #Se foi aceito ou rejeitado, usuário pode percorrer a APD para ver o que ocorreu
               
                 opcao = messagebox.askyesno("Percorrimento do APD", ". Gostaria de visualizar o percorrimento do APD?")
                 if(opcao):  
@@ -325,10 +353,10 @@ class IngredientSimulator(tk.Tk):
         
         
         
-        if(self.mt):
+        if(self.mt): #Se existir MT
             self.mt.initialize_tape(self.ingredients_sequence)
             self.mt.process_input()
-            if(self.mt.is_accepted()):
+            if(self.mt.is_accepted()): #Achou estado final? Se sim, avise ao usuário
                 ingredientes_total = ""
                 for ingredient in self.ingredients_sequence:
                     ingredientes_total += f" - {ingredient}\n"
@@ -339,12 +367,12 @@ class IngredientSimulator(tk.Tk):
                 self.ingredients_sequence.clear()
                 self.ingredient_entry.delete(0, tk.END)
                 
-            elif(self.mt.is_rejected()):
+            elif(self.mt.is_rejected()): #Achou estado de erro? Se sim, avise ao usuário
                     self.change_situation(3)
                     messagebox.showerror("Erro", f"O conjunto de ingredientes resultou em um estado de erro!")
                     self.terminal.insert(tk.END, f"Estado de Erro atingido! \n")
 
-            if(self.mt.is_accepted() or self.mt.is_rejected):
+            if(self.mt.is_accepted() or self.mt.is_rejected): #Se foi aceito ou rejeitado, usuário pode percorrer a MT para ver o que ocorreu
                 opcao = messagebox.askyesno("Percorrimento da MT", ". Gostaria de visualizar o percorrimento da MT?")
                 if(opcao):
                     animated_button_mt(self.Grafo, self.mt.states_passed,self.mt.tape_states)
@@ -359,7 +387,7 @@ class IngredientSimulator(tk.Tk):
             
 
         
-
+    #Reseta simulação, resetando todas as máquinas
     def reset_simulation(self):
         self.terminal.delete(1.0, tk.END)
         self.ingredient_entry.delete(0, tk.END)
@@ -377,10 +405,12 @@ class IngredientSimulator(tk.Tk):
         self.ingredient_image_label.config(image='')
 
         
-        self.afd = None
-        self.mt = None
-        self.apd = None
+        #self.afd = None
+        #self.mt = None
+        #self.apd = None
 
+
+    #Mostra grafo para o usuário, dependendo da máquina e autômato
     def show_graph(self):
         if self.Grafo:
             if self.afd:

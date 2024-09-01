@@ -378,7 +378,7 @@ def animated_button_mt(G, transition_states, stack_changes):
         ax_stack.clear()
         stack = stack_changes[state_index[0] % len(stack_changes)]
         ax_stack.text(0.5, 0.5, '\n'.join(stack), fontsize=12, va='center', ha='center')
-        ax_stack.set_title('Pilha')
+        ax_stack.set_title('Fita')
         ax_stack.axis('off')
 
     def forward(event):
