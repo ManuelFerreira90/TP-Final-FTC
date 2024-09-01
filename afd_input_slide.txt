@@ -1,0 +1,17 @@
+Q: I P1 C1 P2 C2 F erro
+I: I
+F: F
+I -> P1 | p 
+I -> erro | m 
+P1 -> P2 | p 
+P2 -> P1 | p 
+P2 -> C1 | m 
+P1 -> erro | m
+C1 -> C2 | m 
+C1 -> erro | p 
+C1 -> F | a
+C2 -> erro | p 
+C2 -> C1 | m 
+F -> erro | p 
+F -> erro | m 
+F -> erro | a 
