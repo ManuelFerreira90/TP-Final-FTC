@@ -36,7 +36,7 @@ class IngredientSimulator(tk.Tk):
         menu = tk.Menu(self)
         self.config(menu=menu)
         file_menu = tk.Menu(menu, tearoff=0)
-        menu.add_cascade(label="Arquivo", menu=file_menu)
+        menu.add_cascade(label="Carregar", menu=file_menu)
         file_menu.add_command(label="Carregar AFD", command=self.load_afd)
         file_menu.add_command(label="Carregar APD", command=self.load_apd)
         file_menu.add_command(label="Carregar MT", command=self.load_mt)
