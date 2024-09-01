@@ -1,7 +1,6 @@
-Q: I ing1 erro F
+Q: I ing1 F
 I: I
 F: F
-I -> ing1 | s | a
+I -> ing1 | a | a
 ing1 -> F | a | b
-F -> erro | o | &
 ---

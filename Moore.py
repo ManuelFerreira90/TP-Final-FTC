@@ -6,6 +6,7 @@ class MooreMachine:
         self.final_state = final_state
         self.initial_state = initial_state
         self.outputs = outputs
+        self.output_log = [" "]
         self.states_passed = [initial_state]
 
     def process_input(self, input_char):
@@ -19,6 +20,7 @@ class MooreMachine:
                     self.current_state = next_state
                     self.states_passed.append(self.current_state)
                     print(f"Entrada: {input_char}, Saída: {output}")
+                    self.output_log.append(output)
                     return output
         
         # Se nenhuma transição válida foi encontrada, permanece no estado atual
@@ -74,6 +76,7 @@ def load_moore_machine_from_file(filename):
 
     return MooreMachine(states_line, transitions, initial_state, final_state, outputs)
 
+"""
 # Exemplo de uso
 file_path = './moore_input.txt'  # Nome do arquivo de configuração
 
@@ -93,7 +96,7 @@ if moore_machine.is_accepted():
 else:
     print("Falha na tradução da receita.")
 
-
+"""
 """
 DICIONARIO:
 w => a: Água - Essencial para a vida.
