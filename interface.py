@@ -249,7 +249,7 @@ class IngredientSimulator(tk.Tk):
 
     
 
-    #def check_ingredients_mt(self,ingredients):
+   # def check_ingredients_mt(self,ingredients):
     #    for ingredient in ingredients:
     #         if ingredient not in self.ingredient_descriptions:
     #              return False
@@ -265,7 +265,7 @@ class IngredientSimulator(tk.Tk):
 
         #Ingrediente é valido? Alguma máquina ou autômato está carregada?
         #Se sim, processe o input para uma delas, a que existir
-        if ((ingredient in self.ingredient_descriptions and self.afd) or (ingredient in self.ingredient_descriptions and self.apd) or (self.mt and self.check_ingredients_mt(ingredient))):
+        if ((ingredient in self.ingredient_descriptions and self.afd) or (ingredient in self.ingredient_descriptions and self.apd) or (self.mt and ingredient in self.ingredient_descriptions)):
             self.ingredients_sequence.append(ingredient)
             self.ingredient_entry.delete(0, tk.END)
 

@@ -1,24 +1,34 @@
+#Classe Responsável pela Máquina de Turing e seu funcionamento
+
+
+
 class MT:
     def __init__(self, states, transitions, initial_state, final_states, blank_symbol, error_state):
-        self.states = states
-        self.transitions = transitions
-        self.initial_state = initial_state
-        self.current_state = self.initial_state
-        self.final_states = final_states
-        self.blank_symbol = blank_symbol
-        self.error_state = error_state
-        self.tape = []
-        self.tape_states = []
-        self.head_position = 0
-        self.states_passed = []
+        self.states = states #Todos seus estados
+        
+        self.transitions = transitions #Todas suas transições
+        self.initial_state = initial_state #Estado inicial
+        self.current_state = self.initial_state #Estado atual
+        self.final_states = final_states #Estados finais
+        self.blank_symbol = blank_symbol #Simbolo vazio
+        self.error_state = error_state #Estado de erro
+        self.tape = []   #Fita
+        self.tape_states = []  #Armazena todas as mudanças na fita para visualização posterior na interface gráfica (percorrimento da MT)
+        self.head_position = 0 #Posição que aponta na fita
+        self.states_passed = [] #Armazena todos os estados passados na fita para visualização posterior na interface gráfica (percorrimento da MT)
+        self.input_string = None
 
+    #Inicializa a fita, apontando para o simbolo inicial e para o estado inicial
     def initialize_tape(self, input_string):
+        self.input_string = input_string
         self.tape = list(input_string) + [self.blank_symbol]
+        self.tape_states = []
+        self.states_passed = []
         self.tape_states.append(self.tape.copy())
         self.head_position = 0
         self.states_passed = [self.current_state]
         
-
+    #Processa o input com todos os ingredientes de uma vez, percorrendo e modificando a fita quando necessário
     def process_input(self):
         while self.current_state not in self.final_states and self.current_state != self.error_state:
             current_symbol = self.tape[self.head_position]
@@ -26,7 +36,7 @@ class MT:
             
             # Verifica as transições com base no estado e símbolo atuais
             for (state_symbol, input_symbol), (next_state, write_symbol, move_direction) in self.transitions.items():
-                state, symbol = state_symbol.split()  # Divide 'state symbol' em 'state' e 'symbol'
+                state, symbol = state_symbol.split()  
                 if state == self.current_state and symbol == current_symbol:
                     # Encontrou a transição
                     self.tape[self.head_position] = write_symbol
@@ -37,7 +47,10 @@ class MT:
 
                     
                     # Atualiza a posição da cabeça
-                    self.head_position += 1 if move_direction == 'R' else -1
+                    if move_direction == 'D':
+                        self.head_position += 1
+                    elif move_direction == 'E':
+                        self.head_position -= 1
 
                     # Ajusta a fita caso necessário
                     if self.head_position < 0:
@@ -46,7 +59,6 @@ class MT:
                     elif self.head_position >= len(self.tape):
                         self.tape.append(self.blank_symbol)
                     self.tape_states.append(self.tape.copy())
-                    print("aaaaa",self.tape_states)
                     break
                     
                 
@@ -55,12 +67,17 @@ class MT:
                 self.current_state = self.error_state
                 self.states_passed.append(self.current_state)
             
+
+    #Caso chegou em um estado final, retorna True
     def is_accepted(self):  
         return self.current_state in self.final_states
+
+    #Caso chegou em um estado de erro, retorna True
 
     def is_rejected(self):
         return self.current_state == self.error_state
 
+    #Reseta a máquina
     def reset(self):
         self.current_state = self.initial_state
         self.head_position = 0
@@ -68,6 +85,20 @@ class MT:
         self.tape = []
         self.tape_states = []
 
+#Lê a Máquina de Turing de um arquivo .txt
+
+#Padrão que deve ser lido:
+
+'''
+Q: todos os estados
+I: estado inicial
+F: estados finais
+B: símbolo reconhecido como vazio (qualquer símbolo que o usuário deseja)
+E: estados de erro
+Restante: transições de estado na forma:estado_inicial ingrediente | novo_estado simbolo_a_ser_escrito direcao_para_mover_fita
+Movimentos na fita-> D para direita, E para esquerda
+
+'''
 def load_mt_from_file(filename):
     states = set()
     transitions = {}
@@ -111,7 +142,7 @@ def load_mt_from_file(filename):
     if error_states:
         error_state = next(iter(error_states))
 
-    # Processar transições
+    # Processar transições na forma especificada anteriormente
     for line in lines[5:]:
         line = line.strip()
         if '->' in line:
@@ -127,7 +158,7 @@ def load_mt_from_file(filename):
                         action_parts = next_state_action[1].strip().split()
                         if len(action_parts) == 2:
                             write_symbol, move_direction = action_parts
-                            # Corrigir o processamento para adicionar corretamente ao dicionário de transições
+        
                             transitions[(state_transition, parts[0].split()[1])] = (next_state, write_symbol, move_direction)
         elif '|' in line:
             parts = line.split('|')
@@ -140,7 +171,5 @@ def load_mt_from_file(filename):
                     init_state, symbol = state_transition.split()
                     transitions[(init_state + " " + symbol, symbol)] = (next_state, write_symbol, move_direction)
 
-    if not error_state:
-        raise ValueError("Estado de erro não encontrado")
 
-    return MT(states, transitions, initial_state, final_states, blank_symbol, error_state)
+    return MT(states, transitions, initial_state, final_states, blank_symbol, error_state) #retorna a Máquina de Turing com os estados, transições, estado inicial, estados finais, símbolo em branco e estados de erro
