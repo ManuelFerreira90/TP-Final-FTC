@@ -203,9 +203,9 @@ class IngredientSimulator(tk.Tk):
        
         file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
         if file_path:
-            self.afd = load_APD_from_file(file_path)
+            self.apd = load_APD_from_file(file_path)
             self.update_buttons_state()
-            #self.Grafo = ler_afd_arquivo(file_path)
+            self.Grafo = ler_apd_arquivo(file_path)
             messagebox.showinfo("Sucesso", "Automato carregado com sucesso.")
 
     def load_mt(self):
@@ -221,7 +221,7 @@ class IngredientSimulator(tk.Tk):
 
 
     def update_buttons_state(self):
-        state = tk.NORMAL if (self.afd or self.mt) else tk.DISABLED
+        state = tk.NORMAL if (self.afd or self.mt or self.apd) else tk.DISABLED
         self.add_button.config(state=state)
         self.finish_button.config(state=state)
         self.see_graph.config(state=state)
@@ -232,7 +232,7 @@ class IngredientSimulator(tk.Tk):
                   return False
         return True
     def add_ingredient(self):
-        if not self.afd and not self.mt:
+        if not self.afd and not self.mt and not self.apd:
             messagebox.showerror("Erro", "Automato não carregado.")
             return
 
@@ -312,10 +312,10 @@ class IngredientSimulator(tk.Tk):
                     self.terminal.insert(tk.END, f"Estado de Erro atingido! \n")
 
             if(self.apd.is_accepted() or self.apd.is_rejected()):
+              
                 opcao = messagebox.askyesno("Percorrimento do APD", ". Gostaria de visualizar o percorrimento do APD?")
-                if(opcao):
-                    pass
-                    #animate_with_button_afd(self.Grafo, self.apd)
+                if(opcao):  
+                    animate_with_button_apd(self.Grafo, self.apd.states_passed,self.apd.pilha_states)
                 self.reset_simulation()
             else:
                     messagebox.showinfo("Não finalizado", f"O conjunto de ingredientes não resultado em um estado final ou um estado de erro!")
@@ -385,6 +385,9 @@ class IngredientSimulator(tk.Tk):
                 desenhar_grafo_grid_afd(self.Grafo)
             if self.mt:
                  desenhar_grafo_grid_mt(self.Grafo)
+
+            if self.apd:
+                 desenhar_grafo_grid_apd(self.Grafo)
                  
 
 

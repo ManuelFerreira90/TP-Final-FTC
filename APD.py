@@ -8,6 +8,8 @@ class APD:
         self.error_state = error_state
         self.states_passed = [initial_state]
         self.pilha = ['&']
+        self.pilha_states = []
+        self.pilha_states.append(self.pilha.copy())
         self.topoDaPilha = 0
 
     def process_input(self, input_char):
@@ -15,18 +17,20 @@ class APD:
             for (next_state, char, desempilha, empilha) in self.transitions[self.current_state]:
                 if char == input_char:
                     if desempilha == self.pilha[self.topoDaPilha] or desempilha == '&':
-                        print(self.current_state)
+            
                         self.current_state = next_state
                         self.states_passed.append(self.current_state)
 
                         if desempilha == self.pilha[self.topoDaPilha] and desempilha != '&':
                             self.pilha.remove(desempilha)
+                            self.pilha_states.append(self.pilha.copy())
                             self.topoDaPilha -= 1
 
                         if(empilha != '&'):
                             self.pilha.append(empilha)
+                            self.pilha_states.append(self.pilha.copy())
                             self.topoDaPilha += 1
-
+                        
                     else:
                         break
 

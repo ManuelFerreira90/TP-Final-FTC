@@ -67,6 +67,47 @@ def ler_afd_arquivo(filename):
                     G.add_edge(state_transition, next_state, label=char)
 
     return G
+
+def ler_apd_arquivo(filename):
+    G = nx.DiGraph()
+    initial_state = None
+    final_state = None
+    error_state = None
+
+    with open(filename, 'r') as file:
+        lines = file.readlines()
+
+    # Processar os estados
+    states_line = lines[0].strip().split(': ')[1].split()
+    G.add_nodes_from(states_line)
+
+    # Processar o estado inicial
+    initial_state = lines[1].strip().split(': ')[1]
+
+    # Processar o estado final
+    final_state = lines[2].strip().split(': ')[1]
+
+    # Processar transições
+    transitions = {}
+    for line in lines[3:]:
+        if not line.strip():
+            continue
+        parts = line.strip().split(' | ')
+        state_transition, char, desempilha, empilha = parts[0].split(' -> '), parts[1].strip(), parts[2].strip(), parts[3].strip()
+        current_state, next_state = state_transition[0], state_transition[1]
+
+        # Adicionar transição ao grafo
+        label = f"{char}; {desempilha}, {empilha}"
+        G.add_edge(current_state, next_state, label=label)
+
+    # Identificar estado de erro
+    error_state = [state for state in states_line if 'erro' in state][0]
+
+    # Marcar estados finais no grafo
+    G.nodes[final_state]['final'] = True
+
+    return G
+
 def ler_mt_arquivo(filename):
     G = nx.DiGraph()
     initial_state = None
@@ -174,7 +215,6 @@ def desenhar_grafo_grid_afd(G):
 
     final_states = [node for node, data in G.nodes(data=True) if data.get('final', False)]
     nx.draw_networkx_nodes(G, pos, nodelist=final_states, node_color='lightgreen', node_size=3000)
-    plt.get_current_fig_manager().window.state('zoomed')
     plt.show()
 
     
@@ -225,7 +265,6 @@ def animate_with_button_afd(G, transition_states):
     ax_button = plt.axes([0.4, 0.05, 0.2, 0.075])
     button = Button(ax_button, 'Próximo')
     button.on_clicked(forward)
-    plt.get_current_fig_manager().window.state('zoomed')
 
     plt.show()
 
@@ -256,10 +295,37 @@ def desenhar_grafo_grid_mt(G):
 
     final_states = [node for node, data in G.nodes(data=True) if data.get('final', False)]
     nx.draw_networkx_nodes(G, pos, nodelist=final_states, node_color='lightgreen', node_size=3000)
-    plt.get_current_fig_manager().window.state('zoomed')
+    #plt.get_current_fig_manager().window.state('zoomed')
 
     plt.show()
 
+
+def desenhar_grafo_grid_apd(G):
+    """
+    Desenha o grafo do APD em um layout de grade.
+    
+    Parâmetros:
+    - G: NetworkX DiGraph, a representação gráfica do APD.
+    """
+    nodes = list(G.nodes())
+    grid_size = int(len(nodes) ** 0.5) + 1
+
+    pos = {node: (i % grid_size, i // grid_size) for i, node in enumerate(nodes)}
+
+    fig_width = max(10, grid_size * 2)
+    fig_height = max(8, grid_size * 1.5)
+    plt.figure(figsize=(fig_width, fig_height))
+
+    nx.draw(G, pos, with_labels=True, node_size=3000, node_color='lightblue',
+            font_size=12, font_weight='bold', edge_color='gray', arrows=True, node_shape='o')
+
+    labels = nx.get_edge_attributes(G, 'label')
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_size=12)
+
+    final_states = [node for node, data in G.nodes(data=True) if data.get('final', False)]
+    nx.draw_networkx_nodes(G, pos, nodelist=final_states, node_color='lightgreen', node_size=3000)
+
+    plt.show()
 
 def animated_button_mt(G, transition_states, stack_changes):
     print(stack_changes)
@@ -308,6 +374,7 @@ def animated_button_mt(G, transition_states, stack_changes):
         """
         Function to draw the stack in the left subplot.
         """
+        
         ax_stack.clear()
         stack = stack_changes[state_index[0] % len(stack_changes)]
         ax_stack.text(0.5, 0.5, '\n'.join(stack), fontsize=12, va='center', ha='center')
@@ -329,6 +396,71 @@ def animated_button_mt(G, transition_states, stack_changes):
     ax_button = plt.axes([0.4, 0.05, 0.2, 0.075])
     button = Button(ax_button, 'Próximo')
     button.on_clicked(forward)
-    plt.get_current_fig_manager().window.state('zoomed')
+
+
+    plt.show()
+def animate_with_button_apd(G, transition_states, stack_changes):
+    print(stack_changes)
+    """
+    Anima o grafo do APD destacando o estado atual e avança ao próximo estado com um botão.
+    
+    Parâmetros:
+    - G: NetworkX DiGraph, a representação gráfica do APD.
+    - transition_states: List, a sequência de estados pelos quais o APD passa.
+    - stack_changes: List, a sequência de mudanças da pilha correspondendo aos estados.
+    """
+    nodes = list(G.nodes())
+    grid_size = int(len(nodes) ** 0.5) + 1
+
+    pos = {node: (i % grid_size, i // grid_size) for i, node in enumerate(nodes)}
+
+    fig, (ax_graph, ax_stack) = plt.subplots(1, 2, figsize=(18, 10))
+    plt.subplots_adjust(left=0.05, right=0.95, bottom=0.2, wspace=0.3)
+
+    state_index = [0]
+
+    def draw_graph():
+      
+        ax_graph.clear()
+        nx.draw(G, pos, ax=ax_graph, with_labels=True, node_size=3000,
+                node_color='lightblue', font_size=12, font_weight='bold',
+                edge_color='gray', arrows=True, node_shape='o')
+
+        current_state = transition_states[state_index[0] % len(transition_states)]
+        labels = nx.get_edge_attributes(G, 'label')
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_size=12, ax=ax_graph)
+
+        final_states = [node for node, data in G.nodes(data=True) if data.get('final', False)]
+        nx.draw_networkx_nodes(G, pos, ax=ax_graph, nodelist=final_states, node_color='lightgreen', node_size=3000)
+        nx.draw_networkx_nodes(G, pos, ax=ax_graph, nodelist=[current_state],
+                               node_color='red', node_size=3000)
+
+    def draw_stack():
+        """
+        Função para desenhar o conteúdo da pilha no subplot esquerdo.
+        """
+        ax_stack.clear()
+        stack = stack_changes[state_index[0] % len(stack_changes)]
+        ax_stack.text(0.5, 0.5, '\n'.join(stack), fontsize=12, va='center', ha='center')
+        ax_stack.set_title('Pilha')
+        ax_stack.axis('off')
+
+        
+   
+    def forward(event):
+        """
+        Callback para avançar para o próximo estado ao clicar no botão.
+        """
+        state_index[0] = (state_index[0] + 1) % len(transition_states)
+        draw_graph()
+        draw_stack()
+        plt.draw()
+
+    draw_graph()
+    draw_stack()
+
+    ax_button = plt.axes([0.4, 0.05, 0.2, 0.075])
+    button = Button(ax_button, 'Próximo')
+    button.on_clicked(forward)
 
     plt.show()
