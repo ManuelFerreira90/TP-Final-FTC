@@ -1,9 +1,8 @@
 class MooreMachine:
-    def __init__(self, states, transitions, initial_state, final_state, outputs):
+    def __init__(self, states, transitions, initial_state, outputs):
         self.states = states
         self.transitions = transitions
         self.current_state = initial_state
-        self.final_state = final_state
         self.initial_state = initial_state
         self.outputs = outputs
         self.output_log = [" "]
@@ -27,12 +26,6 @@ class MooreMachine:
         print(f"Erro: Transição inválida ou estado não encontrado para a entrada '{input_char}'.")
         return None
 
-    def is_accepted(self):
-        """
-        Verifica se o estado atual é o estado final.
-        """
-        return self.current_state == self.final_state
-
     def reset(self):
         """
         Reseta a máquina ao estado inicial.
@@ -50,7 +43,6 @@ def load_moore_machine_from_file(filename):
     # Primeira linha define os estados da máquina
     states_line = lines[0].strip().split(': ')[1].split()
     initial_state = lines[1].strip().split(': ')[1]
-    final_state = lines[2].strip().split(': ')[1]
 
     transitions = {}
     outputs = {}
@@ -74,7 +66,7 @@ def load_moore_machine_from_file(filename):
         # Define a saída associada ao estado de destino
         outputs[next_state] = output
 
-    return MooreMachine(states_line, transitions, initial_state, final_state, outputs)
+    return MooreMachine(states_line, transitions, initial_state, outputs)
 
 """
 # Exemplo de uso
