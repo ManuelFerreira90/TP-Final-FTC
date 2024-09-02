@@ -350,11 +350,17 @@ class IngredientSimulator(tk.Tk):
                     messagebox.showerror("Erro", f"O conjunto de ingredientes resultou em um estado de erro!")
                     self.terminal.insert(tk.END, f"Estado de Erro atingido! \n")
             
-            opcao = messagebox.askyesno("Percorrimento do AFD", ". Gostaria de visualizar o percorrimento do AFD?")
-            if(opcao):
-                animate_with_button_afd(self.Grafo, self.afd.states_passed)
+            if(self.afd.is_accepted() or self.afd.is_rejected()):
+                opcao = messagebox.askyesno("Percorrimento do AFD", ". Gostaria de visualizar o percorrimento do AFD?")
+
+                if(opcao):
+                   animate_with_button_afd(self.Grafo, self.afd.states_passed)
+            else:
+                    self.change_situation(1)
+                    messagebox.showerror("Erro", f"O conjunto de ingredientes não resultou em um estado final ou de erro!")
+                    self.terminal.insert(tk.END, f"Nenhum estado final ou de erro atingido! \n")
             self.reset_simulation()
-        
+
         if(self.apd): #Se existir APD
             if(self.apd.is_accepted()): #Achou estado final? Se sim, avise ao usuário
                 ingredientes_total = ""
@@ -372,12 +378,19 @@ class IngredientSimulator(tk.Tk):
                     messagebox.showerror("Erro", f"O conjunto de ingredientes resultou em um estado de erro!")
                     self.terminal.insert(tk.END, f"Estado de Erro atingido! \n")
 
-              
-            opcao = messagebox.askyesno("Percorrimento do APD", ". Gostaria de visualizar o percorrimento do APD?")
-            if(opcao):  
+            if(self.apd.is_accepted() or self.apd.is_rejected()):
+                 opcao = messagebox.askyesno("Percorrimento do APD", ". Gostaria de visualizar o percorrimento do APD?")
+                 if(opcao):  
                     animate_with_button_apd(self.Grafo, self.apd.states_passed,self.apd.pilha_states)
+            else:
+                    self.change_situation(1)
+                    messagebox.showerror("Erro", f"O conjunto de ingredientes não resultou em um estado final ou de erro!")
+                    self.terminal.insert(tk.END, f"Nenhum estado final ou de erro atingido! \n")
+                    opcao = messagebox.askyesno("Percorrimento do APD", ". Gostaria de visualizar o percorrimento do APD?")
+                    if(opcao):  
+                       animate_with_button_apd(self.Grafo, self.apd.states_passed,self.apd.pilha_states)
             self.reset_simulation()
-        
+     
         
         if(self.mt): #Se existir MT
             self.mt.initialize_tape(self.ingredients_sequence)
@@ -397,11 +410,17 @@ class IngredientSimulator(tk.Tk):
                     self.change_situation(3)
                     messagebox.showerror("Erro", f"O conjunto de ingredientes resultou em um estado de erro!")
                     self.terminal.insert(tk.END, f"Estado de Erro atingido! \n")
-
-            opcao = messagebox.askyesno("Percorrimento da MT", ". Gostaria de visualizar o percorrimento da MT?")
-            if(opcao):
+            if(self.mt.is_accepted() or self.mt.is_rejected()):
+                opcao = messagebox.askyesno("Percorrimento da MT", ". Gostaria de visualizar o percorrimento da MT?")
+                if(opcao):
                     animate_with_button_mt(self.Grafo, self.mt.states_passed,self.mt.tape_states)
+
+            else:
+                    self.change_situation(1)
+                    messagebox.showerror("Erro", f"O conjunto de ingredientes não resultou em um estado final ou de erro!")
+                    self.terminal.insert(tk.END, f"Nenhum estado final ou de erro atingido! \n")
             self.reset_simulation()
+
            
         if(self.moore):
             ingredientes_total = ""
