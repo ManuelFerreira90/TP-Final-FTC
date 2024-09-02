@@ -10,3 +10,4 @@ ing3 -> ing3 | p A &
 ing3 -> F | c & &
 ing3 -> erro | o & &
 F -> erro | o O &
+---

@@ -14,4 +14,5 @@ C2 -> erro | p
 C2 -> C1 | m 
 F -> erro | p 
 F -> erro | m 
-F -> erro | a 
+F -> erro | a
+---

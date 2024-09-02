@@ -1,0 +1,6 @@
+Q: I ing1 ing2
+I: I
+I -> ing1 | a p
+ing1 -> ing2 | a c
+ing2 -> ing1 | b c
+---

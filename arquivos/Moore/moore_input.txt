@@ -1,24 +1,24 @@
 Q: I ing1 ing2 ing3 ing4 ing5 ing6
 I: I
-I -> ing1 | a | p
-I -> ing3 | b | c
-I -> ing5 | c | d
-ing1 -> ing2 | a | c
-ing1 -> ing3 | b | c
-ing1 -> ing5 | c | d
-ing2 -> ing2 | a | c
-ing2 -> ing3 | b | c
-ing2 -> ing5 | c | d
-ing5 -> ing1 | a | p
-ing5 -> ing3 | b | c
-ing5 -> ing6 | c | a
-ing6 -> ing6 | c | a
-ing6 -> ing1 | a | p
-ing6 -> ing3 | b | c
-ing4 -> ing4 | a | c
-ing4 -> ing3 | b | c
-ing4 -> ing5 | c | d
-ing3 -> ing5 | c | d
-ing3 -> ing1 | a | p
-ing3 -> ing4 | b | d
+I -> ing1 | a p
+I -> ing3 | b c
+I -> ing5 | c d
+ing1 -> ing2 | a c
+ing1 -> ing3 | b c
+ing1 -> ing5 | c d
+ing2 -> ing2 | a c
+ing2 -> ing3 | b c
+ing2 -> ing5 | c d
+ing5 -> ing1 | a p
+ing5 -> ing3 | b c
+ing5 -> ing6 | c a
+ing6 -> ing6 | c a
+ing6 -> ing1 | a p
+ing6 -> ing3 | b c
+ing4 -> ing4 | a c
+ing4 -> ing3 | b c
+ing4 -> ing5 | c d
+ing3 -> ing5 | c d
+ing3 -> ing1 | a p
+ing3 -> ing4 | b d
 ---

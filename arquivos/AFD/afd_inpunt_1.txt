@@ -21,3 +21,4 @@ ing2 -> ing4 | e
 ing2 -> ing7 | m
 ing2 -> ing8 | c
 ing2 -> F | p
+---

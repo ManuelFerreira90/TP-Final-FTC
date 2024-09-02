@@ -30,3 +30,4 @@ q4 b | q_erro b D
 q4 c | q_erro c D
 q4 x | q_erro x D
 q4 w | q_erro w D
+---

@@ -132,8 +132,8 @@ def ler_mt_arquivo(filename):
     for final_state in final_states:
         if final_state in G:
             G.nodes[final_state]['final'] = True
-        else:
-            print(f"Warning: Estado final {final_state} não encontrado no grafo.")
+      #  else:
+          #  print(f"Warning: Estado final {final_state} não encontrado no grafo.")
 
     for line in lines[4:]:
         line = line.strip()
@@ -295,8 +295,8 @@ def animate_with_button_afd(G, transition_states):
 ##Desenha grafo da MT
 
 def desenhar_grafo_grid_mt(G):
-    for edge in G.edges():
-        print(edge)
+   # for edge in G.edges():
+       # print(edge)
   
     nodes = list(G.nodes())
     grid_size = int(len(nodes) ** 0.5) + 1
@@ -347,7 +347,7 @@ def desenhar_grafo_grid_apd(G):
 ##Animação transição da MT
 
 def animated_button_mt(G, transition_states, stack_changes):
-    print(stack_changes)
+    #print(stack_changes)
  
     nodes = list(G.nodes())
     grid_size = int(len(nodes) ** 0.5) + 1 
@@ -403,7 +403,7 @@ def animated_button_mt(G, transition_states, stack_changes):
 ##Animação transição da APD
 
 def animate_with_button_apd(G, transition_states, stack_changes):
-    print(stack_changes)
+   # print(stack_changes)
    
     nodes = list(G.nodes())
     grid_size = int(len(nodes) ** 0.5) + 1

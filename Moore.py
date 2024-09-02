@@ -21,7 +21,7 @@ class MooreMachine:
                     self.output_log.append(output)
                     return output
         
-        print(f"Erro: Transição inválida ou estado não encontrado para a entrada '{input_char}'.")
+        #print(f"Erro: Transição inválida ou estado não encontrado para a entrada '{input_char}'.")
         return None
 
     def reset(self):
