@@ -50,7 +50,6 @@ class IngredientSimulator(tk.Tk):
         file_menu.add_command(label="Carregar Autômato Finito Determinístico", command=self.load_afd)
         file_menu.add_command(label="Carregar Autômato de Pilha Determinístico", command=self.load_apd)
         file_menu.add_command(label="Carregar Máquina de Turing", command=self.load_mt)
-        file_menu.add_command(label="Carregar Máquina de Mealy")
         file_menu.add_command(label="Carregar Máquina de Moore",command=self.load_moore)
         file_menu.add_separator()
         file_menu.add_command(label="Sair", command=self.quit)
@@ -401,7 +400,7 @@ class IngredientSimulator(tk.Tk):
 
             opcao = messagebox.askyesno("Percorrimento da MT", ". Gostaria de visualizar o percorrimento da MT?")
             if(opcao):
-                    animated_button_mt(self.Grafo, self.mt.states_passed,self.mt.tape_states)
+                    animate_with_button_mt(self.Grafo, self.mt.states_passed,self.mt.tape_states)
             self.reset_simulation()
            
         if(self.moore):
@@ -422,7 +421,7 @@ class IngredientSimulator(tk.Tk):
 
             opcao = messagebox.askyesno("Percorrimento da Máquina de Moore", ". Gostaria de visualizar o percorrimento da Máquina de Moore?")
             if(opcao):
-                animated_button_moore(self.Grafo, self.moore.states_passed,self.moore.output_log)
+                animate_with_button_moore(self.Grafo, self.moore.states_passed,self.moore.output_log)
                 self.reset_simulation()
         
 

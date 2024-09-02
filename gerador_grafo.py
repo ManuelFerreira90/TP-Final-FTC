@@ -247,21 +247,15 @@ def desenhar_grafo_grid_afd(G):
 ##Animação transição AFD
 
 def animate_with_button_afd(G, transition_states):
-   
-   
-
     nodes = list(G.nodes())
-    grid_size = int(len(nodes) ** 0.5) + 1  
-
+    grid_size = int(len(nodes) ** 0.5) + 1
     pos = {node: (i % grid_size, i // grid_size) for i, node in enumerate(nodes)}
 
     fig, ax = plt.subplots()
-    plt.subplots_adjust(bottom=0.2)  
-
+    plt.subplots_adjust(bottom=0.2)
     state_index = [0]
 
     def draw_graph():
-
         ax.clear()
         nx.draw(G, pos, ax=ax, with_labels=True, node_size=3000,
                 node_color='lightblue', font_size=12, font_weight='bold',
@@ -269,7 +263,6 @@ def animate_with_button_afd(G, transition_states):
 
         current_state = transition_states[state_index[0] % len(transition_states)]
     
-
         labels = nx.get_edge_attributes(G, 'label')
         nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_size=12, ax=ax)  
 
@@ -277,17 +270,30 @@ def animate_with_button_afd(G, transition_states):
         nx.draw_networkx_nodes(G, pos, ax=ax, nodelist=final_states, node_color='lightgreen', node_size=3000)
         nx.draw_networkx_nodes(G, pos, ax=ax, nodelist=[current_state],
                                node_color='red', node_size=3000)
-    def forward(event):
-       
+
+    def forward(event=None):
         state_index[0] += 1
         draw_graph()
         plt.draw()
+
+    def backward(event=None):
+        state_index[0] -= 1
+        draw_graph()
+        plt.draw()
+
+    def on_key(event):
+        if event.key == 'right' or event.key == 'enter':
+            forward()
+        elif event.key == 'left':
+            backward()
 
     draw_graph()
 
     ax_button = plt.axes([0.4, 0.05, 0.2, 0.075])
     button = Button(ax_button, 'Próximo')
     button.on_clicked(forward)
+
+    fig.canvas.mpl_connect('key_press_event', on_key)
 
     plt.show()
 
@@ -346,116 +352,109 @@ def desenhar_grafo_grid_apd(G):
 
 ##Animação transição da MT
 
-def animated_button_mt(G, transition_states, stack_changes):
-    #print(stack_changes)
- 
-    nodes = list(G.nodes())
-    grid_size = int(len(nodes) ** 0.5) + 1 
-
-    pos = {node: (i % grid_size * 2, i // grid_size * 2) for i, node in enumerate(nodes)}
-
-    fig, (ax_graph, ax_stack) = plt.subplots(1, 2, figsize=(18, 10))
-    plt.subplots_adjust(left=0.05, right=0.95, bottom=0.2, wspace=0.3)  
-
-    state_index = [0]
-
-    def draw_graph():
-        
-        ax_graph.clear()
-        nx.draw(G, pos, ax=ax_graph, with_labels=True, node_size=3000,
-                node_color='lightblue', font_size=12, font_weight='bold',
-                edge_color='gray', arrows=True, node_shape='o')
-
-        current_state = transition_states[state_index[0] % len(transition_states)]
-        labels = nx.get_edge_attributes(G, 'label')
-        nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_size=12, ax=ax_graph)
-
-        final_states = [node for node, data in G.nodes(data=True) if data.get('final', False)]
-        nx.draw_networkx_nodes(G, pos, ax=ax_graph, nodelist=final_states, node_color='lightgreen', node_size=3000)
-        nx.draw_networkx_nodes(G, pos, ax=ax_graph, nodelist=[current_state],
-                               node_color='red', node_size=3000)
-
-    def draw_stack():
-       
-        ax_stack.clear()
-        stack = stack_changes[state_index[0] % len(stack_changes)]
-        ax_stack.text(0.5, 0.5, '\n'.join(stack), fontsize=12, va='center', ha='center')
-        ax_stack.set_title('Fita')
-        ax_stack.axis('off')
-
-    def forward(event):
-        
-        state_index[0] += 1
-        draw_graph()
-        draw_stack()
-        plt.draw()
-
-    draw_graph()
-    draw_stack()
-
-    ax_button = plt.axes([0.4, 0.05, 0.2, 0.075])
-    button = Button(ax_button, 'Próximo')
-    button.on_clicked(forward)
-
-
-    plt.show()
-
-##Animação transição da APD
-
-def animate_with_button_apd(G, transition_states, stack_changes):
-   # print(stack_changes)
-   
+def animate_with_button_mt(G, transition_states, stack):
     nodes = list(G.nodes())
     grid_size = int(len(nodes) ** 0.5) + 1
-
     pos = {node: (i % grid_size, i // grid_size) for i, node in enumerate(nodes)}
 
-    fig, (ax_graph, ax_stack) = plt.subplots(1, 2, figsize=(18, 10))
-    plt.subplots_adjust(left=0.05, right=0.95, bottom=0.2, wspace=0.3)
-
+    fig, ax = plt.subplots()
+    plt.subplots_adjust(bottom=0.25)  
     state_index = [0]
 
     def draw_graph():
-      
-        ax_graph.clear()
-        nx.draw(G, pos, ax=ax_graph, with_labels=True, node_size=3000,
+        ax.clear()
+        nx.draw(G, pos, ax=ax, with_labels=True, node_size=3000,
                 node_color='lightblue', font_size=12, font_weight='bold',
                 edge_color='gray', arrows=True, node_shape='o')
 
         current_state = transition_states[state_index[0] % len(transition_states)]
         labels = nx.get_edge_attributes(G, 'label')
-        nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_size=12, ax=ax_graph)
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_size=12, ax=ax)
 
         final_states = [node for node, data in G.nodes(data=True) if data.get('final', False)]
-        nx.draw_networkx_nodes(G, pos, ax=ax_graph, nodelist=final_states, node_color='lightgreen', node_size=3000)
-        nx.draw_networkx_nodes(G, pos, ax=ax_graph, nodelist=[current_state],
-                               node_color='red', node_size=3000)
+        nx.draw_networkx_nodes(G, pos, ax=ax, nodelist=final_states, node_color='lightgreen', node_size=3000)
+        nx.draw_networkx_nodes(G, pos, ax=ax, nodelist=[current_state], node_color='red', node_size=3000)
 
-    def draw_stack():
-       
-        ax_stack.clear()
-        stack = stack_changes[state_index[0] % len(stack_changes)]
-        ax_stack.text(0.5, 0.5, '\n'.join(stack), fontsize=12, va='center', ha='center')
-        ax_stack.set_title('Pilha')
-        ax_stack.axis('off')
+        ax.text(0.05, 0.02, f"Pilha: {stack[state_index[0] % len(stack)]}", transform=fig.transFigure,
+                fontsize=12, bbox=dict(facecolor='white', alpha=0.5))
 
-        
-   
-    def forward(event):
-        """
-        Callback para avançar para o próximo estado ao clicar no botão.
-        """
-        state_index[0] = (state_index[0] + 1) % len(transition_states)
+    def forward(event=None):
+        state_index[0] += 1
         draw_graph()
-        draw_stack()
         plt.draw()
 
+    def backward(event=None):
+        state_index[0] -= 1
+        draw_graph()
+        plt.draw()
+
+    def on_key(event):
+        if event.key == 'right' or event.key == 'enter':
+            forward()
+        elif event.key == 'left':
+            backward()
+
     draw_graph()
-    draw_stack()
 
     ax_button = plt.axes([0.4, 0.05, 0.2, 0.075])
     button = Button(ax_button, 'Próximo')
     button.on_clicked(forward)
+
+    fig.canvas.mpl_connect('key_press_event', on_key)
+
+    plt.show()
+    
+##Animação transição da APD
+
+def animate_with_button_apd(G, transition_states, stack):
+    nodes = list(G.nodes())
+    grid_size = int(len(nodes) ** 0.5) + 1
+    pos = {node: (i % grid_size, i // grid_size) for i, node in enumerate(nodes)}
+
+    fig, ax = plt.subplots()
+    plt.subplots_adjust(bottom=0.25)  
+    state_index = [0]
+
+    def draw_graph():
+        ax.clear()
+        nx.draw(G, pos, ax=ax, with_labels=True, node_size=3000,
+                node_color='lightblue', font_size=12, font_weight='bold',
+                edge_color='gray', arrows=True, node_shape='o')
+
+        current_state = transition_states[state_index[0] % len(transition_states)]
+        labels = nx.get_edge_attributes(G, 'label')
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_size=12, ax=ax)
+
+        final_states = [node for node, data in G.nodes(data=True) if data.get('final', False)]
+        nx.draw_networkx_nodes(G, pos, ax=ax, nodelist=final_states, node_color='lightgreen', node_size=3000)
+        nx.draw_networkx_nodes(G, pos, ax=ax, nodelist=[current_state], node_color='red', node_size=3000)
+
+        ax.text(0.05, 0.02, f"Pilha: {stack[state_index[0] % len(stack)]}", transform=fig.transFigure,
+                fontsize=12, bbox=dict(facecolor='white', alpha=0.5))
+
+    def forward(event=None):
+        state_index[0] += 1
+        draw_graph()
+        plt.draw()
+
+    def backward(event=None):
+        state_index[0] -= 1
+        draw_graph()
+        plt.draw()
+
+    def on_key(event):
+        if event.key == 'right' or event.key == 'enter':
+            forward()
+        elif event.key == 'left':
+            backward()
+
+    draw_graph()
+
+    ax_button = plt.axes([0.4, 0.05, 0.2, 0.075])
+    button = Button(ax_button, 'Próximo')
+    button.on_clicked(forward)
+
+    fig.canvas.mpl_connect('key_press_event', on_key)
 
     plt.show()
 
@@ -482,58 +481,54 @@ def desenhar_grafo_moore(G):
 
 
 ##Animação transição da Moore
-
-def animated_button_moore(G, transition_states, outputs):
-  
-    
+def animate_with_button_moore(G, transition_states, output_symbols):
     nodes = list(G.nodes())
-    grid_size = int(len(nodes) ** 0.5) + 1  
+    grid_size = int(len(nodes) ** 0.5) + 1
+    pos = {node: (i % grid_size, i // grid_size) for i, node in enumerate(nodes)}
 
-    pos = {node: (i % grid_size * 2, i // grid_size * 2) for i, node in enumerate(nodes)}
-
-    fig, (ax_graph, ax_output) = plt.subplots(1, 2, figsize=(18, 10))
-    plt.subplots_adjust(left=0.05, right=0.95, bottom=0.2, wspace=0.3)  
-
+    fig, ax = plt.subplots()
+    plt.subplots_adjust(bottom=0.25)  
     state_index = [0]
 
     def draw_graph():
-     
-        ax_graph.clear()
-        nx.draw(G, pos, ax=ax_graph, with_labels=True, node_size=3000,
+        ax.clear()
+        nx.draw(G, pos, ax=ax, with_labels=True, node_size=3000,
                 node_color='lightblue', font_size=12, font_weight='bold',
                 edge_color='gray', arrows=True, node_shape='o')
 
         current_state = transition_states[state_index[0] % len(transition_states)]
         labels = nx.get_edge_attributes(G, 'label')
-        nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_size=12, ax=ax_graph)
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_size=12, ax=ax)
 
         final_states = [node for node, data in G.nodes(data=True) if data.get('final', False)]
-        nx.draw_networkx_nodes(G, pos, ax=ax_graph, nodelist=final_states, node_color='lightgreen', node_size=3000)
-        nx.draw_networkx_nodes(G, pos, ax=ax_graph, nodelist=[current_state],
-                               node_color='red', node_size=3000)
+        nx.draw_networkx_nodes(G, pos, ax=ax, nodelist=final_states, node_color='lightgreen', node_size=3000)
+        nx.draw_networkx_nodes(G, pos, ax=ax, nodelist=[current_state], node_color='red', node_size=3000)
 
-    def draw_output():
-      
-        ax_output.clear()
-        output = outputs[state_index[0] % len(outputs)]
-        ax_output.text(0.5, 0.5, output, fontsize=12, va='center', ha='center')
-        ax_output.set_title('Saída')
-        ax_output.axis('off')
+        ax.text(0.05, 0.02, f"Símbolo de Saída: {output_symbols[state_index[0] % len(output_symbols)]}", 
+                transform=fig.transFigure, fontsize=12, bbox=dict(facecolor='white', alpha=0.5))
 
-    def forward(event):
-        """
-        Callback function to advance to the next state when the button is clicked.
-        """
+    def forward(event=None):
         state_index[0] += 1
         draw_graph()
-        draw_output()
         plt.draw()
 
+    def backward(event=None):
+        state_index[0] -= 1
+        draw_graph()
+        plt.draw()
+
+    def on_key(event):
+        if event.key == 'right' or event.key == 'enter':
+            forward()
+        elif event.key == 'left':
+            backward()
+
     draw_graph()
-    draw_output()
 
     ax_button = plt.axes([0.4, 0.05, 0.2, 0.075])
     button = Button(ax_button, 'Próximo')
     button.on_clicked(forward)
+
+    fig.canvas.mpl_connect('key_press_event', on_key)
 
     plt.show()
