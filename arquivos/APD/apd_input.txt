@@ -7,7 +7,6 @@ q1 -> q2 | m & A
 q2 -> q2 | m & A
 q2 -> q3 | p A &
 q3 -> q3 | p A &
-q3 -> F | c & &
-q3 -> erro | o & &
+q3 -> F | o & &
 F -> erro | o O &
 ---
