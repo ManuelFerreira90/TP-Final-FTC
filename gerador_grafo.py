@@ -399,6 +399,7 @@ def animated_button_mt(G, transition_states, stack_changes):
 ##Animação transição da APD
 
 def animate_with_button_apd(G, transition_states, stack_changes):
+    print(stack_changes)
    
     nodes = list(G.nodes())
     grid_size = int(len(nodes) ** 0.5) + 1
