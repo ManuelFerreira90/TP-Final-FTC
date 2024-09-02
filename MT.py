@@ -145,6 +145,8 @@ def load_mt_from_file(filename):
     # Processar transições na forma especificada anteriormente
     for line in lines[5:]:
         line = line.strip()
+        if  line == "---":
+            break
         if '->' in line:
             parts = line.split('->')
             if len(parts) == 2:

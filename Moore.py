@@ -18,7 +18,6 @@ class MooreMachine:
                     # Transição para o próximo estado
                     self.current_state = next_state
                     self.states_passed.append(self.current_state)
-                    print(f"Entrada: {input_char}, Saída: {output}")
                     self.output_log.append(output)
                     return output
         
@@ -45,21 +44,26 @@ def load_moore_machine_from_file(filename):
     transitions = {}
     outputs = {}
 
-    for line in lines[2:]:
-        if not line.strip() or line.strip() == "---":
+    for line in lines[3:]:
+        if not line.strip():
             continue
-        
+        if  line.strip() == "---":
+            break
+        # Processa a linha de transição
         parts = line.strip().split(' | ')
+            
         state_transition = parts[0].split(' -> ')
-        char = parts[1].strip()
-        output = parts[2].strip()
+        char, output= parts[1].strip().split()
+        
+            
 
         current_state, next_state = state_transition[0], state_transition[1]
-        
+            
         if current_state not in transitions:
             transitions[current_state] = []
         transitions[current_state].append((next_state, char, output))
 
+            # Define a saída associada ao estado de destino
         outputs[next_state] = output
 
     return MooreMachine(states_line, transitions, initial_state, outputs)

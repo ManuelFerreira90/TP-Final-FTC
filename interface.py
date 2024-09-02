@@ -350,7 +350,7 @@ class IngredientSimulator(tk.Tk):
                     self.change_situation(1)
                     messagebox.showerror("Erro", f"O conjunto de ingredientes resultou em um estado de erro!")
                     self.terminal.insert(tk.END, f"Estado de Erro atingido! \n")
-
+            
             opcao = messagebox.askyesno("Percorrimento do AFD", ". Gostaria de visualizar o percorrimento do AFD?")
             if(opcao):
                 animate_with_button_afd(self.Grafo, self.afd.states_passed)

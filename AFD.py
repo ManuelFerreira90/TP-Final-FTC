@@ -47,6 +47,8 @@ def load_afd_from_file(filename):
     for line in lines[3:]:
         if not line.strip():
             continue
+        if  line.strip() == "---":
+            break
         parts = line.strip().split(' | ')
         state_transition, char = parts[0].split(' -> '), parts[1].strip()
         current_state, next_state = state_transition[0], state_transition[1]

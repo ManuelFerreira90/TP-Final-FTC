@@ -81,10 +81,14 @@ def load_APD_from_file(filename):
     for line in lines[3:]:#obtem as linha a partir da linha 4 do arquivo
         if not line.strip():
             continue
+        if  line.strip() == "---":
+            break
 
         parts = line.strip().split(' | ')#tira os espacos e colica cada parte separada por "|" em uma posicao do vetor "parts"
-        state_transition, char, desempilha, empilha = parts[0].split(' -> '), parts[1].strip(), parts[2].strip(), parts[3].strip()
-        current_state, next_state = state_transition[0], state_transition[1]
+        
+        current_state, next_state = (parts[0].split()[0],parts[0].split()[2])
+        char, desempilha, empilha = parts[1].split()
+    
 
         if current_state not in transitions:
             transitions[current_state] = []

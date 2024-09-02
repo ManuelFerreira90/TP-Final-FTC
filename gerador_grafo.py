@@ -40,6 +40,8 @@ def ler_afd_arquivo(filename):
 
     for line in lines[3:]:
         line = line.strip()
+        if  line == "---":
+            break
         if '->' in line:
             parts = line.split('->')
             if len(parts) != 2:
@@ -79,9 +81,12 @@ def ler_apd_arquivo(filename):
     for line in lines[3:]:
         if not line.strip():
             continue
-        parts = line.strip().split(' | ')
-        state_transition, char, desempilha, empilha = parts[0].split(' -> '), parts[1].strip(), parts[2].strip(), parts[3].strip()
-        current_state, next_state = state_transition[0], state_transition[1]
+        if  line.strip() == "---":
+            break
+        parts = line.strip().split(' | ')#tira os espacos e colica cada parte separada por "|" em uma posicao do vetor "parts"
+        
+        current_state, next_state = (parts[0].split()[0],parts[0].split()[2])
+        char, desempilha, empilha = parts[1].split()
 
         label = f"{char}; {desempilha}, {empilha}"
         G.add_edge(current_state, next_state, label=label)
@@ -132,6 +137,8 @@ def ler_mt_arquivo(filename):
 
     for line in lines[4:]:
         line = line.strip()
+        if  line == "---":
+            break
         if '->' in line:
             parts = line.split('->')
             if len(parts) == 2:
@@ -188,14 +195,16 @@ def ler_moore_arquivo(filename):
     initial_state = lines[1].strip().split(': ')[1]
 
     transitions = {}
-    for line in lines[2:]:
-        if not line.strip() or line.strip() == "---":
+    for line in lines[3:]:
+        if not line.strip():
             continue
+        if  line.strip() == "---":
+            break
         
         parts = line.strip().split(' | ')
         state_transition = parts[0].split(' -> ')
-        char = parts[1].strip()
-        output = parts[2].strip()
+        char, output= parts[1].strip().split()
+       
 
         current_state, next_state = state_transition[0], state_transition[1]
         
