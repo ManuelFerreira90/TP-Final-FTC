@@ -40,10 +40,7 @@ class MT:
                     self.tape[self.head_position] = write_symbol
                     self.current_state = next_state
                     self.states_passed.append(self.current_state)
-                    
-                   
-
-                    
+                                       
                     # Atualiza a posição da cabeça
                     if move_direction == 'D':
                         self.head_position += 1
@@ -57,9 +54,7 @@ class MT:
                     elif self.head_position >= len(self.tape):
                         self.tape.append(self.blank_symbol)
                     self.tape_states.append(self.tape.copy())
-                    break
-                    
-                
+                    break               
             else:
                 # Se nenhuma transição foi encontrada, define o estado de erro
                 self.current_state = self.error_state

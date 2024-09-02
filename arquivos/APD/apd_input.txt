@@ -1,13 +1,13 @@
-Q: I ing1 ing2 ing3 erro F
+Q: I q1 q2 q3 erro F
 I: I
 F: F
-I -> ing1 | a & &
-ing1 -> ing2 | m & A
-ing2 -> ing2 | m & A
-ing2 -> ing3 | p A &
-ing2 -> F | o & &
-ing3 -> ing3 | p A &
-ing3 -> F | c & &
-ing3 -> erro | o & &
+I -> q1 | a & A
+q1 -> q1 | a & A
+q1 -> q2 | m & A
+q2 -> q2 | m & A
+q2 -> q3 | p A &
+q3 -> q3 | p A &
+q3 -> F | c & &
+q3 -> erro | o & &
 F -> erro | o O &
 ---
