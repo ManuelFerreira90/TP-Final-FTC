@@ -6,3 +6,10 @@ E: q_erro
 q0 a | q1 e D
 q1 a | q2 b E
 q1 _ | q_erro _ D
+
+
+q0 b | q_erro _ D
+q0 e | q_erro _ D
+q2 a | q_erro _ D
+q3 a | q_erro _ D
+q3 b | q_erro _ D

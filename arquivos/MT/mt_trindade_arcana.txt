@@ -1,0 +1,32 @@
+Q: q0 q1 q2 q3 q4 q5 q_erro
+I: q0
+F: q5
+B: _
+E: q_erro
+q0 a | q1 x D
+q1 a | q1 a D
+q1 b | q2 y D
+q2 b | q2 b D
+q2 e | q3 z E
+q3 b | q3 b E
+q3 y | q3 y E
+q3 a | q3 a E
+q3 x | q0 x D
+q1 y | q1 y D
+q2 z | q2 z D
+q3 z | q3 z E
+q0 y | q4 y D
+q4 y | q4 y D
+q4 z | q4 z D
+q4 _ | q5 _ D
+q0 b | q_erro b D
+q0 c | q_erro c D
+q1 c | q_erro c D
+q2 a | q_erro a D
+q2 c | q_erro c D
+q3 c | q_erro c E
+q4 a | q_erro a D
+q4 b | q_erro b D
+q4 c | q_erro c D
+q4 x | q_erro x D
+q4 w | q_erro w D

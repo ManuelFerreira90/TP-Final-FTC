@@ -1,7 +1,5 @@
 #Classe Responsável pela Máquina de Turing e seu funcionamento
 
-
-
 class MT:
     def __init__(self, states, transitions, initial_state, final_states, blank_symbol, error_state):
         self.states = states #Todos seus estados
