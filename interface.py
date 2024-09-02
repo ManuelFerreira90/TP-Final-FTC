@@ -86,7 +86,7 @@ class IngredientSimulator(tk.Tk):
         self.update_buttons_state()
 
     #Carrega a descrição e nome do ingrediente que o usuário escolheu no arquivo "ingredientes.txt"
-    def load_ingredient_descriptions(self, filename="ingredientes.txt"):
+    def load_ingredient_descriptions(self, filename="arquivos/ingredientes.txt"):
         descriptions = {}
         with open(filename, 'r', encoding='utf-8') as file:
             for line in file:

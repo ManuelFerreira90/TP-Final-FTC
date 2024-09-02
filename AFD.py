@@ -7,6 +7,7 @@ class AFD:
         self.initial_state = initial_state
         self.error_state = error_state
         self.states_passed = [initial_state]
+        
 
     def process_input(self, input_char):
         if self.current_state in self.transitions:
@@ -33,6 +34,7 @@ class AFD:
     def reset(self):
         self.states_passed = []
         self.current_state = self.initial_state
+        self.states_passed = [self.current_state]
 
 def load_afd_from_file(filename):
     with open(filename, 'r') as file:
