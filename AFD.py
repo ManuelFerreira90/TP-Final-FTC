@@ -13,7 +13,6 @@ class AFD:
         if self.current_state in self.transitions:
             for (next_state, char) in self.transitions[self.current_state]:
                 if char == input_char:
-                    print(self.current_state)
                     self.current_state = next_state
                     self.states_passed.append(self.current_state)
                     return

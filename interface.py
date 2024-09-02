@@ -405,16 +405,15 @@ class IngredientSimulator(tk.Tk):
             self.reset_simulation()
            
         if(self.moore):
-            if(self.moore.is_accepted()): #Achou estado final? Se sim, avise ao usuário
-                ingredientes_total = ""
-                for ingredient in self.ingredients_sequence:
+            ingredientes_total = ""
+            for ingredient in self.ingredients_sequence:
                     ingredientes_total += f" - {ingredient}\n"
-                self.change_situation(2)
-                messagebox.showinfo("Sucesso", f"Poção Finalizada com Ingredientes:\n{ingredientes_total}")
-                self.terminal.insert(tk.END, f"Estado Final atingido! \n")
-                self.terminal.see(tk.END)
-                self.ingredients_sequence.clear()
-                self.ingredient_entry.delete(0, tk.END)
+            self.change_situation(2)
+            messagebox.showinfo("Sucesso", f"Poção Finalizada com Ingredientes:\n{ingredientes_total}")
+            self.terminal.insert(tk.END, f"Estado Final atingido! \n")
+            self.terminal.see(tk.END)
+            self.ingredients_sequence.clear()
+            self.ingredient_entry.delete(0, tk.END)
                 
             #elif(self.moore.is_rejected()): #Achou estado de erro? Se sim, avise ao usuário
              #       self.change_situation(1)

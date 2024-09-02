@@ -188,7 +188,6 @@ def ler_moore_arquivo(filename):
 
     initial_state = lines[1].strip().split(': ')[1]
 
-    final_state = lines[2].strip().split(': ')[1]
 
     transitions = {}
     for line in lines[3:]:
@@ -211,8 +210,7 @@ def ler_moore_arquivo(filename):
 
     if initial_state in G:
         G.nodes[initial_state]['initial'] = True
-    if final_state in G:
-        G.nodes[final_state]['final'] = True
+    
 
     return G
 
