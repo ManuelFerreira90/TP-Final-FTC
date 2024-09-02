@@ -14,10 +14,17 @@
 
 <h2>Execução</h2>
 
-<p>Ao executar o arquivo, será aberta uma tela GUI, onde você poderá carregar um autômato por meio do botão <strong>"Carregar Autômato"</strong>.</p>
+<p>Ao executar o arquivo main.py, será aberta uma tela GUI, onde você poderá carregar um autômato por meio do botão <strong>"Carregar Autômato"</strong>.</p>
 
 <p>Ao clicar nesse botão, uma janela será apresentada para selecionar um documento <code>.txt</code> contendo as informações sobre o autômato.</p>
 
 <p>Após selecionar o arquivo, o autômato será carregado na memória, permitindo adicionar ingredientes na caixa de texto e adicioná-los utilizando o botão <strong>"Adicionar Ingrediente"</strong>.</p>
 
 <p>A cada ingrediente adicionado, uma imagem representativa do ingrediente será exibida na tela. Caso um estado de erro seja atingido devido a uma mistura incorreta de ingredientes, uma mensagem será exibida automaticamente para o usuário. Se um estado final for atingido, indicando que a mistura dos ingredientes resultou em uma das poções finais, o usuário também será notificado automaticamente.</p>
+
+
+<p>É possível visualizar o autômato e a máquina a qualquer momento após carregado, apertando o botão "Visualizar Autômato/Máquina"</p>
+
+
+<p>É possível finalizar a poção, mostrando, caso for atingido o(s) estado(s) final ou de erro. A trajetória do percurso do autômato/máquina. </p>
+

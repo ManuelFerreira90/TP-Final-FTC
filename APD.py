@@ -24,7 +24,8 @@ class APD:
 
                         if(empilha != '&'):
                             self.empilhar(empilha)
-                        
+                        else:
+                            self.pilha_states.append(self.pilha.copy())
                     else:#se a transicao nao for valida vai para o estado de erro
                         break
 
@@ -40,8 +41,9 @@ class APD:
 
     def desempilhar(self):
         if not self.esta_vazia():
+            self.pilha.pop()   
             self.pilha_states.append(self.pilha.copy())
-            return self.pilha.pop()      
+            return      
 
     def topo(self):
         if not self.esta_vazia():
@@ -63,6 +65,7 @@ class APD:
     def reset(self):
         self.states_passed = []
         self.current_state = self.initial_state
+        self.states_passed = [self.initial_state]
         self.pilha = []
 
 def load_APD_from_file(filename):

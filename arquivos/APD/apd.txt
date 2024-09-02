@@ -5,7 +5,7 @@ I -> ing1 | a | & | &
 ing1 -> ing2 | m | & | A
 ing2 -> ing2 | m | & | A
 ing2 -> ing3 | p | A | &
-ing2 -> erro | o | & | &
+ing2 -> F | o | & | &
 ing3 -> ing3 | p | A | &
 ing3 -> F | c | & | &
 ing3 -> erro | o | & | &

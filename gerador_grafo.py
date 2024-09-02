@@ -188,7 +188,7 @@ def ler_moore_arquivo(filename):
     initial_state = lines[1].strip().split(': ')[1]
 
     transitions = {}
-    for line in lines[3:]:
+    for line in lines[2:]:
         if not line.strip() or line.strip() == "---":
             continue
         
@@ -394,6 +394,7 @@ def animated_button_mt(G, transition_states, stack_changes):
 ##Animação transição da APD
 
 def animate_with_button_apd(G, transition_states, stack_changes):
+    print(stack_changes)
    
     nodes = list(G.nodes())
     grid_size = int(len(nodes) ** 0.5) + 1
